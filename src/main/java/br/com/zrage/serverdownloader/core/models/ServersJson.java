@@ -10,10 +10,6 @@ public class ServersJson {
     @JsonProperty("servers")
     private List<GameServer> serverList;
 
-    public ServersJson(List<GameServer> serverList) {
-        this.serverList = serverList;
-    }
-
     public List<GameServer> getServerList() {
         return serverList;
     }
