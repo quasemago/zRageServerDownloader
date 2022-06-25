@@ -34,17 +34,17 @@ public class MapManager {
     }
 
     public void download(GameMap map) {
-        String tempFile = tempFolder.resolve(map.getDownloadableFileName()).toString();
+        final Path tempFile = tempFolder.resolve(map.getDownloadableFileName());
         WebClient client = WebClient.builder()
                 .baseUrl(map.getRemoteFileName())
                 .build();
         Flux<DataBuffer> dataBufferFlux = client.get().retrieve().bodyToFlux(DataBuffer.class);
-        DataBufferUtils.write(dataBufferFlux, Paths.get(tempFile), StandardOpenOption.CREATE).block();
+        DataBufferUtils.write(dataBufferFlux, tempFile, StandardOpenOption.CREATE).block();
     }
 
     public void decompress(GameMap map) throws IOException {
-        String tempFile = tempFolder.resolve(map.getDownloadableFileName()).toString();
-        String decompressTempFile = tempFolder.resolve(map.getLocalFileName()).toString();
+        final String tempFile = tempFolder.resolve(map.getDownloadableFileName()).toString();
+        final String decompressTempFile = tempFolder.resolve(map.getLocalFileName()).toString();
 
         var input = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(tempFile)));
         var output = new FileOutputStream(decompressTempFile);
@@ -56,13 +56,13 @@ public class MapManager {
     }
 
     public void moveToMapsFolder(GameMap map) {
-        var mapsFolder = Paths.get(utils.getGameAppMapsDirectory(serverContext));
+        final Path mapsFolder = Paths.get(utils.getGameAppMapsDirectory(serverContext));
         if (!Files.exists(mapsFolder)) {
             return;
         }
 
-        var tempFile = tempFolder.resolve(map.getLocalFileName());
-        var finalFile = mapsFolder.resolve(map.getLocalFileName());
+        final Path tempFile = tempFolder.resolve(map.getLocalFileName());
+        final Path finalFile = mapsFolder.resolve(map.getLocalFileName());
 
         try {
             Files.deleteIfExists(finalFile);
