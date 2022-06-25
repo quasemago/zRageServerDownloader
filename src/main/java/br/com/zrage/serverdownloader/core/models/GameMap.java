@@ -36,13 +36,8 @@ public class GameMap {
     }
 
     public boolean existsInMapsFolder() {
-        return existsInMapsFolder("");
-    }
-
-    public boolean existsInMapsFolder(String mapFolder) {
-        Path mapsPath = Paths.get(mapFolder.isEmpty() ? serverContext.getMapsDirectory() : mapFolder);
-        File file = new File(mapsPath.resolve(localFileName).toString());
-        return file.exists();
+        // TODO: implement existsInMapsFolder;
+        return false;
     }
 
     public GameServer getServerContext() {
