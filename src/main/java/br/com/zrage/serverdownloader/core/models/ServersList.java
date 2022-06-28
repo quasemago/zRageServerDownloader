@@ -6,15 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ServersJson {
+public class ServersList {
     @JsonProperty("servers")
-    private List<GameServer> serverList;
+    private List<GameServer> servers;
 
-    public List<GameServer> getServerList() {
-        return serverList;
+    public List<GameServer> getServers() {
+        return servers;
     }
 
-    public void setServerList(List<GameServer> serverList) {
-        this.serverList = serverList;
+    public void setServers(List<GameServer> list) {
+        this.servers = list;
     }
 }

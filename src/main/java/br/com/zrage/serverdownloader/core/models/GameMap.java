@@ -1,24 +1,13 @@
 package br.com.zrage.serverdownloader.core.models;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 public class GameMap {
-    private GameServer serverContext;
     private String name;
-    private String downloadableFileName;
-    private String localFileName;
+    private String fileName; // name.bsp{.bz2}
+    private String localFileName; // name.bsp
+    private String remoteFileName; // fastdlUrl + fileName
     private boolean isCompressed;
-    private String remoteFileName;
-    private boolean skipOnDownload;
-
-    // Display porpuses
-    private boolean visible;
 
     public GameMap(String rawName, GameServer server) {
-        this.serverContext = server;
-
         String fileExt = ".bsp";
         this.isCompressed = rawName.charAt(0) != '$';
 
@@ -30,22 +19,14 @@ public class GameMap {
         this.name = rawName.replace("$", "");
 
         // Resolve names.
-        this.downloadableFileName = name + fileExt;
+        this.fileName = name + fileExt;
         this.localFileName = name + ".bsp";
-        this.remoteFileName = serverContext.getFastDlUrl() + downloadableFileName;
+        this.remoteFileName = server.getFastDLUrl() + fileName;
     }
 
     public boolean existsInMapsFolder() {
         // TODO: implement existsInMapsFolder;
         return false;
-    }
-
-    public GameServer getServerContext() {
-        return serverContext;
-    }
-
-    public void setServerContext(GameServer serverContext) {
-        this.serverContext = serverContext;
     }
 
     public String getName() {
@@ -56,12 +37,12 @@ public class GameMap {
         this.name = name;
     }
 
-    public String getDownloadableFileName() {
-        return downloadableFileName;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setDownloadableFileName(String downloadableFileName) {
-        this.downloadableFileName = downloadableFileName;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getLocalFileName() {
@@ -86,26 +67,5 @@ public class GameMap {
 
     public void setRemoteFileName(String remoteFileName) {
         this.remoteFileName = remoteFileName;
-    }
-
-    public boolean isSkipOnDownload() {
-        return skipOnDownload;
-    }
-
-    public void setSkipOnDownload(boolean skipOnDownload) {
-        this.skipOnDownload = skipOnDownload;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

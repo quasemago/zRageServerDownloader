@@ -13,11 +13,6 @@ public class ZRageServerDownloaderApplication {
         ConfigurableApplicationContext ctx = new SpringApplicationBuilder(ZRageServerDownloaderApplication.class)
                 .headless(false).run(args);
 
-        EventQueue.invokeLater(() -> {
-            SwingMainFrame ex = new SwingMainFrame(new javax.swing.JFrame(), true);
-            ex.setSize(600, 450);
-            ex.setLocationRelativeTo(null);
-            ex.setVisible(true);
-        });
+        EventQueue.invokeLater(SwingMainFrame::StartSwingMainFrame);
     }
 }

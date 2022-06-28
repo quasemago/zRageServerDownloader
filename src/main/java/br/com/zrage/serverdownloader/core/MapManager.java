@@ -2,94 +2,59 @@ package br.com.zrage.serverdownloader.core;
 
 import br.com.zrage.serverdownloader.core.models.GameMap;
 import br.com.zrage.serverdownloader.core.models.GameServer;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.io.FileUtils;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 
 import java.io.*;
-import java.lang.annotation.ElementType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.UUID;
 
-public class MapManager {
-    private static final Path mainTempFolder = Paths.get(System.getProperty("java.io.tmpdir")).resolve("zrageTempMaps");
-    private final GameServer serverContext;
-    private final Path tempFolder;
-    private boolean canceled;
+public class MapManager extends DownloadManager {
+    private Path mapsDirectoryPath;
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public MapManager(GameServer server) {
-        this.tempFolder = mainTempFolder.resolve(UUID.randomUUID().toString().toUpperCase());
-        new File(tempFolder.toString()).mkdirs();
+        super(server);
 
-        this.serverContext = server;
-        this.canceled = false;
+        // Persiste o path da pasta "maps" do jogo.
+        this.mapsDirectoryPath = Paths.get(server.getMapsDirectoryPath());
     }
 
-    public void download(GameMap map) {
-        final Path tempFile = tempFolder.resolve(map.getDownloadableFileName());
-        WebClient client = WebClient.builder()
-                .baseUrl(map.getRemoteFileName())
-                .build();
-        Flux<DataBuffer> dataBufferFlux = client.get().retrieve().bodyToFlux(DataBuffer.class);
-        DataBufferUtils.write(dataBufferFlux, tempFile, StandardOpenOption.CREATE).block();
+    public Path getMapsDirectoryPath() {
+        return mapsDirectoryPath;
     }
 
-    public void decompress(GameMap map) throws IOException {
-        final String tempFile = tempFolder.resolve(map.getDownloadableFileName()).toString();
-        final String decompressTempFile = tempFolder.resolve(map.getLocalFileName()).toString();
+    public void setMapsDirectoryPath(Path path) {
+        this.mapsDirectoryPath = path;
+    }
 
-        var input = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(tempFile)));
-        var output = new FileOutputStream(decompressTempFile);
-        try (input; output) {
-            IOUtils.copy(input, output);
+    public void downloadMap(GameMap map) {
+        final Path tempFile = tempFolderPath.resolve(map.getFileName());
+        this.download(map.getRemoteFileName(), tempFile);
+    }
+
+    public void decompressMap(GameMap map) {
+        final String tempFile = tempFolderPath.resolve(map.getFileName()).toString();
+        final String targetTempFile = tempFolderPath.resolve(map.getLocalFileName()).toString();
+
+        try {
+            this.decompress(tempFile, targetTempFile);
         } catch (IOException err) {
             err.printStackTrace();
         }
+    }
+
+    public boolean mapExists(GameMap map) {
+        final Path targetFile = mapsDirectoryPath.resolve(map.getLocalFileName());
+        return Files.exists(targetFile);
     }
 
     public void moveToMapsFolder(GameMap map) {
-        final Path mapsFolder = Paths.get(utils.getGameAppMapsDirectory(serverContext));
-        if (!Files.exists(mapsFolder)) {
+        if (!Files.exists(mapsDirectoryPath)) {
             return;
         }
 
-        final Path tempFile = tempFolder.resolve(map.getLocalFileName());
-        final Path finalFile = mapsFolder.resolve(map.getLocalFileName());
+        final Path tempFile = tempFolderPath.resolve(map.getLocalFileName());
+        final Path targetFile = mapsDirectoryPath.resolve(map.getLocalFileName());
 
-        try {
-            Files.deleteIfExists(finalFile);
-        } catch (IOException err) {
-            err.printStackTrace();
-        }
-
-        try {
-            Files.move(tempFile, finalFile);
-        } catch (IOException err) {
-            err.printStackTrace();
-        }
-    }
-
-    public static void deleteAllTempFiles() {
-        try {
-            FileUtils.deleteDirectory(mainTempFolder.toFile());
-        } catch (IOException err) {
-            err.printStackTrace();
-        }
-    }
-
-    public boolean isCanceled() {
-        return canceled;
-    }
-
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
+        this.moveFile(tempFile, targetFile);
     }
 }
