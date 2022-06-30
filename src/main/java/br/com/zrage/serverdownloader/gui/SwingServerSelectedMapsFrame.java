@@ -88,6 +88,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             downloadMapsButton.setEnabled(true);
             downloadMapsButton.setVisible(true);
             replaceExistingMapsCheckBox.setEnabled(true);
+            fileChooseButton.setEnabled(true);
             setCursor(null); //turn off the wait cursor
             DownloadManager.appendToLogger("Download finalizado!");
         }
@@ -112,16 +113,16 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         // Init swing components.
         JPanel mainPanel = new JPanel();
         JLabel jLabel1 = new JLabel();
-        mapsDirTextField = new javax.swing.JTextField();
-        JButton fileChooseButton = new JButton();
-        replaceExistingMapsCheckBox = new javax.swing.JCheckBox();
+        mapsDirTextField = new JTextField();
+        fileChooseButton = new JButton();
+        replaceExistingMapsCheckBox = new JCheckBox();
         JButton selectMapsButton = new JButton();
         JLabel selectedMapsLabel = new JLabel();
-        downloadMapsButton = new javax.swing.JButton();
-        cancelDownloadButton = new javax.swing.JButton();
+        downloadMapsButton = new JButton();
+        cancelDownloadButton = new JButton();
         JScrollPane jScrollPane1 = new JScrollPane();
         JTextArea progressTextArea = new JTextArea();
-        progressBar = new javax.swing.JProgressBar();
+        progressBar = new JProgressBar();
 
         // Inicializa todos mapas selecionados de padrão.
         // TODO: select maps to download.
@@ -143,7 +144,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainPanel.setBackground(new java.awt.Color(209, 209, 209));
+        mainPanel.setBackground(new java.awt.Color(242, 242, 242)); // [209,209,209]
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Game maps directory:");
@@ -282,6 +283,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         downloadMapsButton.setEnabled(false);
         downloadMapsButton.setVisible(false);
         replaceExistingMapsCheckBox.setEnabled(false);
+        fileChooseButton.setEnabled(false);
         cancelDownloadButton.setEnabled(true);
         cancelDownloadButton.setVisible(true);
 
@@ -319,10 +321,11 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     }
 
     // Variables declaration - do not modify
-    private javax.swing.JButton downloadMapsButton;
-    private javax.swing.JButton cancelDownloadButton;
-    private javax.swing.JTextField mapsDirTextField;
-    private javax.swing.JProgressBar progressBar;
-    private javax.swing.JCheckBox replaceExistingMapsCheckBox;
+    private JButton fileChooseButton;
+    private JButton downloadMapsButton;
+    private JButton cancelDownloadButton;
+    private JTextField mapsDirTextField;
+    private JProgressBar progressBar;
+    private JCheckBox replaceExistingMapsCheckBox;
     // End of variables declaration
 }

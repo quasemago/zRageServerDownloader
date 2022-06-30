@@ -23,17 +23,17 @@ public class SwingMainFrame extends JDialog {
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
-        mainPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        fastdlUrlLabel = new javax.swing.JLabel();
-        fastdlUrlTextField = new javax.swing.JTextField();
-        startButton = new javax.swing.JButton();
-        jToolBar1 = new javax.swing.JToolBar();
-        aboutButton = new javax.swing.JButton();
-        typeMapsCheckBox = new javax.swing.JCheckBox();
-        typeAssetsCheckBox = new javax.swing.JCheckBox();
+        JPanel mainPanel = new JPanel();
+        JScrollPane jScrollPane1 = new JScrollPane();
+        JLabel jLabel1 = new JLabel();
+        JLabel jLabel2 = new JLabel();
+        JLabel fastdlUrlLabel = new JLabel();
+        fastDLUrlTextField = new JTextField();
+        startButton = new JButton();
+        JToolBar jToolBar1 = new JToolBar();
+        aboutButton = new JButton();
+        typeMapsCheckBox = new JCheckBox();
+        typeAssetsCheckBox = new JCheckBox();
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -50,13 +50,13 @@ public class SwingMainFrame extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainPanel.setBackground(new java.awt.Color(209, 209, 209));
+        mainPanel.setBackground(new java.awt.Color(242, 242, 242)); // [209,209,209]
 
         // Available Servers.
         List<GameServer> serverList = utils.getAvailableServersList().getServers();
         availableServersList = new javax.swing.JList<>(new Vector<>(serverList));
         availableServersList.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        availableServersList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        availableServersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         availableServersList.addListSelectionListener(evt -> availableServersListValueChanged((GameServer) availableServersList.getSelectedValue()));
 
         // Snipped from: https://stackoverflow.com/questions/12478661/
@@ -80,8 +80,8 @@ public class SwingMainFrame extends JDialog {
         fastdlUrlLabel.setText("FastDL Url:");
         fastdlUrlLabel.setPreferredSize(new java.awt.Dimension(37, 29));
 
-        fastdlUrlTextField.setEditable(false);
-        fastdlUrlTextField.setText("");
+        fastDLUrlTextField.setEditable(false);
+        fastDLUrlTextField.setText("");
 
         startButton.setText("START");
         startButton.setEnabled(false);
@@ -125,7 +125,7 @@ public class SwingMainFrame extends JDialog {
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                                                 .addComponent(fastdlUrlLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(fastdlUrlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
+                                                .addComponent(fastDLUrlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(mainPanelLayout.createSequentialGroup()
@@ -155,7 +155,7 @@ public class SwingMainFrame extends JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(startButton, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                                        .addComponent(fastdlUrlTextField)
+                                        .addComponent(fastDLUrlTextField)
                                         .addComponent(fastdlUrlLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
@@ -202,7 +202,7 @@ public class SwingMainFrame extends JDialog {
 
     private void availableServersListValueChanged(GameServer server) {
         serverContext = server;
-        fastdlUrlTextField.setText(serverContext.getFastDLUrl());
+        fastDLUrlTextField.setText(serverContext.getFastDLUrl());
         startButton.setEnabled(true);
     }
 
@@ -223,16 +223,10 @@ public class SwingMainFrame extends JDialog {
 
     // Variables declaration - do not modify
     private javax.swing.JList availableServersList;
-    private javax.swing.JLabel fastdlUrlLabel;
-    private javax.swing.JTextField fastdlUrlTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JButton aboutButton;
-    private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JButton startButton;
-    private javax.swing.JCheckBox typeMapsCheckBox;
-    private javax.swing.JCheckBox typeAssetsCheckBox;
+    private JTextField fastDLUrlTextField;
+    private JButton aboutButton;
+    private JButton startButton;
+    private JCheckBox typeMapsCheckBox;
+    private JCheckBox typeAssetsCheckBox;
     // End of variables declaration
 }

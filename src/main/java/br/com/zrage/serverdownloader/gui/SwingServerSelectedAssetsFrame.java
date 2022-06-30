@@ -85,6 +85,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             downloadAssetsButton.setEnabled(true);
             downloadAssetsButton.setVisible(true);
             replaceExistingAssetsCheckBox.setEnabled(true);
+            fileChooseButton.setEnabled(true);
             setCursor(null); //turn off the wait cursor
 
             // Reset download list.
@@ -112,8 +113,8 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         // Init swing components.
         JPanel mainPanel = new JPanel();
         JLabel jLabel1 = new JLabel();
-        assetsDirTextField = new javax.swing.JTextField();
-        JButton fileChooseButton = new JButton();
+        assetsDirTextField = new JTextField();
+        fileChooseButton = new JButton();
         replaceExistingAssetsCheckBox = new JCheckBox();
         downloadAssetsButton = new JButton();
         cancelDownloadButton = new JButton();
@@ -140,7 +141,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainPanel.setBackground(new Color(209, 209, 209));
+        mainPanel.setBackground(new java.awt.Color(242, 242, 242)); // [209,209,209]
 
         jLabel1.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Game directory:");
@@ -272,6 +273,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         downloadAssetsButton.setEnabled(false);
         downloadAssetsButton.setVisible(false);
         replaceExistingAssetsCheckBox.setEnabled(false);
+        fileChooseButton.setEnabled(false);
         cancelDownloadButton.setEnabled(true);
         cancelDownloadButton.setVisible(true);
 
@@ -309,6 +311,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
     }
 
     // Variables declaration - do not modify
+    private JButton fileChooseButton;
     private JButton downloadAssetsButton;
     private JButton cancelDownloadButton;
     private JTextField assetsDirTextField;
