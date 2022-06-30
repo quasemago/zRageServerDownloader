@@ -30,8 +30,8 @@ public class SwingMainFrame extends JDialog {
         fastdlUrlLabel = new javax.swing.JLabel();
         fastdlUrlTextField = new javax.swing.JTextField();
         startButton = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        aboutMenuItem = new javax.swing.JMenu();
+        jToolBar1 = new javax.swing.JToolBar();
+        aboutButton = new javax.swing.JButton();
         typeMapsCheckBox = new javax.swing.JCheckBox();
         typeAssetsCheckBox = new javax.swing.JCheckBox();
 
@@ -119,7 +119,7 @@ public class SwingMainFrame extends JDialog {
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
                 mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
@@ -138,18 +138,20 @@ public class SwingMainFrame extends JDialog {
                                                 .addComponent(typeAssetsCheckBox))
                                         .addComponent(jScrollPane1))
                                 .addContainerGap())
+                        .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
                 mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addGap(7, 7, 7)
+                                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel2)
                                         .addComponent(typeAssetsCheckBox)
                                         .addComponent(typeMapsCheckBox))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(startButton, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
@@ -158,13 +160,22 @@ public class SwingMainFrame extends JDialog {
                                 .addContainerGap())
         );
 
-        jMenuBar1.setPreferredSize(new java.awt.Dimension(34, 29));
+        jToolBar1.setRollover(false);
+        jToolBar1.setFloatable(false);
 
-        aboutMenuItem.setText("About");
-        aboutMenuItem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jMenuBar1.add(aboutMenuItem);
+        aboutButton.setText("About");
+        aboutButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        aboutButton.setFocusable(false);
+        aboutButton.setBorder(null);
+        aboutButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        aboutButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        aboutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                System.out.println("BLAH");
+            }
+        });
 
-        setJMenuBar(jMenuBar1);
+        jToolBar1.add(aboutButton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -183,9 +194,8 @@ public class SwingMainFrame extends JDialog {
     private void startButtonActionPerformed() {
         if (typeAssetsCheckBox.isSelected()) {
             SwingServerSelectedAssetsFrame.StartSwingServerFrame(serverContext);
-        }
-        else {
-            // Maps is default.
+        } else {
+            // Maps is default value.
             SwingServerSelectedMapsFrame.StartSwingServerFrame(serverContext);
         }
     }
@@ -217,8 +227,8 @@ public class SwingMainFrame extends JDialog {
     private javax.swing.JTextField fastdlUrlTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JMenu aboutMenuItem;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JButton aboutButton;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton startButton;

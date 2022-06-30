@@ -33,7 +33,7 @@ public class AssetManager extends DownloadManager {
     }
 
     public void decompressAsset(GameAsset asset) {
-        final String tempFile = tempFolderPath.resolve(asset.getFileName()).toString();
+        final Path tempFile = tempFolderPath.resolve(asset.getFileName());
         final String targetTempFile = tempFolderPath.resolve(asset.getLocalFileName()).toString();
 
         try {

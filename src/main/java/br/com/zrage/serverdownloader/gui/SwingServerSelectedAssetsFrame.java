@@ -110,18 +110,16 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         this.setTitle("zRageServerDownloader: " + serverContext.getName());
 
         // Init swing components.
-        mainPanel = new JPanel();
-        jLabel1 = new JLabel();
+        JPanel mainPanel = new JPanel();
+        JLabel jLabel1 = new JLabel();
         assetsDirTextField = new javax.swing.JTextField();
-        fileChooseButton = new JButton();
+        JButton fileChooseButton = new JButton();
         replaceExistingAssetsCheckBox = new JCheckBox();
         downloadAssetsButton = new JButton();
         cancelDownloadButton = new JButton();
-        jScrollPane1 = new JScrollPane();
-        progressTextArea = new JTextArea();
+        JScrollPane jScrollPane1 = new JScrollPane();
+        JTextArea progressTextArea = new JTextArea();
         progressBar = new JProgressBar();
-        jMenuBar1 = new JMenuBar();
-        aboutMenuItem = new JMenu();
 
         // Inicializa todos mapas selecionados de padrão.
         // TODO: select maps to download.
@@ -227,24 +225,16 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                                         .addComponent(assetsDirTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                                         .addComponent(fileChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(replaceExistingAssetsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                                        .addComponent(downloadAssetsButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(cancelDownloadButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(downloadAssetsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cancelDownloadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
         );
-
-        jMenuBar1.setPreferredSize(new Dimension(34, 29));
-
-        aboutMenuItem.setText("About");
-        aboutMenuItem.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
-        jMenuBar1.add(aboutMenuItem);
-
-        setJMenuBar(jMenuBar1);
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -319,17 +309,10 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
     }
 
     // Variables declaration - do not modify
-    private JMenu aboutMenuItem;
     private JButton downloadAssetsButton;
     private JButton cancelDownloadButton;
-    private JButton fileChooseButton;
-    private JLabel jLabel1;
-    private JMenuBar jMenuBar1;
-    private JScrollPane jScrollPane1;
-    private JPanel mainPanel;
     private JTextField assetsDirTextField;
     private JProgressBar progressBar;
-    private JTextArea progressTextArea;
     private JCheckBox replaceExistingAssetsCheckBox;
     // End of variables declaration
 }

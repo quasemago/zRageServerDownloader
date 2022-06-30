@@ -32,7 +32,7 @@ public class MapManager extends DownloadManager {
     }
 
     public void decompressMap(GameMap map) {
-        final String tempFile = tempFolderPath.resolve(map.getFileName()).toString();
+        final Path tempFile = tempFolderPath.resolve(map.getFileName());
         final String targetTempFile = tempFolderPath.resolve(map.getLocalFileName()).toString();
 
         try {

@@ -57,8 +57,8 @@ public class DownloadManager {
         return false;
     }
 
-    protected void decompress(String filePath, String targetPath) throws IOException {
-        BZip2CompressorInputStream input = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(filePath)));
+    protected void decompress(Path filePath, String targetPath) throws IOException {
+        BZip2CompressorInputStream input = new BZip2CompressorInputStream(new BufferedInputStream(Files.newInputStream(filePath)));
         FileOutputStream output = new FileOutputStream(targetPath);
 
         try {
@@ -69,6 +69,13 @@ public class DownloadManager {
 
         input.close();
         output.close();
+
+        // Delete temp input file.
+        try {
+            Files.deleteIfExists(filePath);
+        } catch (IOException err) {
+            err.printStackTrace();
+        }
     }
 
     protected void moveFile(Path filePath, Path targetPath) {

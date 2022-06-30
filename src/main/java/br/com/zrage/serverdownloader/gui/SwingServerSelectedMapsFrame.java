@@ -110,20 +110,18 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         this.setTitle("zRageServerDownloader: " + serverContext.getName());
 
         // Init swing components.
-        mainPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        JPanel mainPanel = new JPanel();
+        JLabel jLabel1 = new JLabel();
         mapsDirTextField = new javax.swing.JTextField();
-        fileChooseButton = new javax.swing.JButton();
+        JButton fileChooseButton = new JButton();
         replaceExistingMapsCheckBox = new javax.swing.JCheckBox();
-        selectMapsButton = new javax.swing.JButton();
-        selectedMapsLabel = new javax.swing.JLabel();
+        JButton selectMapsButton = new JButton();
+        JLabel selectedMapsLabel = new JLabel();
         downloadMapsButton = new javax.swing.JButton();
         cancelDownloadButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        progressTextArea = new javax.swing.JTextArea();
+        JScrollPane jScrollPane1 = new JScrollPane();
+        JTextArea progressTextArea = new JTextArea();
         progressBar = new javax.swing.JProgressBar();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        aboutMenuItem = new javax.swing.JMenu();
 
         // Inicializa todos mapas selecionados de padrão.
         // TODO: select maps to download.
@@ -148,25 +146,17 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         mainPanel.setBackground(new java.awt.Color(209, 209, 209));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("Maps directory:");
+        jLabel1.setText("Game maps directory:");
 
         mapsDirTextField.setText(serverContext.getMapsDirectoryPath());
 
         fileChooseButton.setText("...");
-        fileChooseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileChooseButtonActionPerformed();
-            }
-        });
+        fileChooseButton.addActionListener(evt -> fileChooseButtonActionPerformed());
 
         replaceExistingMaps = false;
         replaceExistingMapsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         replaceExistingMapsCheckBox.setText("Replace any existing maps");
-        replaceExistingMapsCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                replaceExistingMaps = replaceExistingMapsCheckBox.isSelected();
-            }
-        });
+        replaceExistingMapsCheckBox.addActionListener(evt -> replaceExistingMaps = replaceExistingMapsCheckBox.isSelected());
 
         selectMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         selectMapsButton.setText("Select Maps");
@@ -181,22 +171,16 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
         downloadMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         downloadMapsButton.setText("Download Maps");
-        downloadMapsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downloadMapsButtonActionPerformed();
-            }
-        });
+        downloadMapsButton.addActionListener(evt -> downloadMapsButtonActionPerformed());
         downloadMapsButton.setEnabled(true);
 
         cancelDownloadButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         cancelDownloadButton.setText("Cancel");
-        cancelDownloadButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (task != null) {
-                    task.cancel(true);
-                }
-                progressBar.setValue(0);
+        cancelDownloadButton.addActionListener(evt -> {
+            if (task != null) {
+                task.cancel(true);
             }
+            progressBar.setValue(0);
         });
         cancelDownloadButton.setEnabled(false);
         cancelDownloadButton.setVisible(false);
@@ -245,26 +229,18 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                                         .addComponent(mapsDirTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                                         .addComponent(fileChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(replaceExistingMapsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                                        .addComponent(downloadMapsButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(cancelDownloadButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(selectMapsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(selectedMapsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(selectedMapsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(downloadMapsButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                                        .addComponent(cancelDownloadButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                                        .addComponent(replaceExistingMapsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(selectMapsButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
         );
-
-        jMenuBar1.setPreferredSize(new java.awt.Dimension(34, 29));
-
-        aboutMenuItem.setText("About");
-        aboutMenuItem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jMenuBar1.add(aboutMenuItem);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -343,19 +319,10 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     }
 
     // Variables declaration - do not modify
-    private javax.swing.JMenu aboutMenuItem;
     private javax.swing.JButton downloadMapsButton;
     private javax.swing.JButton cancelDownloadButton;
-    private javax.swing.JButton fileChooseButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField mapsDirTextField;
     private javax.swing.JProgressBar progressBar;
-    private javax.swing.JTextArea progressTextArea;
     private javax.swing.JCheckBox replaceExistingMapsCheckBox;
-    private javax.swing.JButton selectMapsButton;
-    private javax.swing.JLabel selectedMapsLabel;
     // End of variables declaration
 }
