@@ -183,6 +183,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                 if (task != null) {
                     task.cancel(true);
                 }
+                progressBar.setValue(0);
             }
         });
         cancelDownloadButton.setEnabled(false);

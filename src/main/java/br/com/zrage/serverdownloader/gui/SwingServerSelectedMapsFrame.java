@@ -49,17 +49,16 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                 }
 
                 // Test download map.
-                DownloadManager.appendToLogger("Baixando mapa " + map.getRemoteFileName());
+                DownloadManager.appendToLogger("Baixando mapa: " + map.getRemoteFileName());
                 mapManager.downloadMap(map);
 
                 // Test decompress map.
                 if (map.isCompressed()) {
-                    DownloadManager.appendToLogger("Extraindo mapa " + map.getName());
+                    DownloadManager.appendToLogger("Extraindo mapa: " + map.getName());
                     mapManager.decompressMap(map);
                 }
 
                 // Move to maps directory.
-                DownloadManager.appendToLogger("Movendo " + map.getName() + " mapa para a pasta do jogo");
                 mapManager.moveToMapsFolder(map);
 
                 // Update progress.
@@ -193,6 +192,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                 if (task != null) {
                     task.cancel(true);
                 }
+                progressBar.setValue(0);
             }
         });
         cancelDownloadButton.setEnabled(false);
