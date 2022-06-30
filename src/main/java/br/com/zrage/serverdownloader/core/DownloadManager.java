@@ -6,7 +6,6 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
@@ -14,12 +13,8 @@ import reactor.core.publisher.Mono;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 // TODO:
 public class DownloadManager {
@@ -63,11 +58,15 @@ public class DownloadManager {
     protected void decompress(String filePath, String targetPath) throws IOException {
         BZip2CompressorInputStream input = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(filePath)));
         FileOutputStream output = new FileOutputStream(targetPath);
+
         try {
             IOUtils.copy(input, output);
         } catch (IOException err) {
             err.printStackTrace();
         }
+
+        input.close();
+        output.close();
     }
 
     protected void moveFile(Path filePath, Path targetPath) {
@@ -78,9 +77,7 @@ public class DownloadManager {
         }
 
         try {
-            //Files.move(filePath, targetPath);
-            Files.copy(filePath, targetPath);
-            FileUtils.deleteQuietly(filePath.toFile());
+            Files.move(filePath, targetPath);
         } catch (IOException err) {
             err.printStackTrace();
         }
