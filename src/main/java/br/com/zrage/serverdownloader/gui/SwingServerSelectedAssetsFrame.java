@@ -4,6 +4,7 @@ import br.com.zrage.serverdownloader.core.AssetManager;
 import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.models.GameAsset;
 import br.com.zrage.serverdownloader.core.models.GameServer;
+import br.com.zrage.serverdownloader.core.utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +18,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyChangeListener {
-    private GameServer serverContext;
-    private AssetManager assetManager;
+    private final GameServer serverContext;
+    private final AssetManager assetManager;
     private List<GameAsset> assetsToDownload;
     private TaskSwing task;
     private boolean replaceExistingAssets;
@@ -48,7 +49,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                 }
 
                 // Download asset.
-                DownloadManager.appendToLogger("Downloading: " + asset.getRemoteFileName());
+                DownloadManager.appendToLogger("Downloading: " + asset.getFilePath());
                 if (!assetManager.downloadAsset(asset)) {
                     DownloadManager.appendToLogger("*Error Downloading*: " + asset.getRemoteFileName());
                     continue;
@@ -90,7 +91,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
 
             // Reset download list.
             assetsToDownload = serverContext.getGameAssetsList();
-            DownloadManager.appendToLogger("Download finalizado!");
+            DownloadManager.appendToLogger("Download completed!");
         }
     }
 
@@ -108,6 +109,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
+        utils.setSwingImageIcon(this);
         this.setTitle("zRageServerDownloader: " + serverContext.getName());
 
         // Init swing components.
@@ -135,13 +137,10 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         });
 
         // call onCancel() on ESCAPE
-        mainPanel.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        mainPanel.registerKeyboardAction(evt ->
+                onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainPanel.setBackground(new java.awt.Color(242, 242, 242)); // [209,209,209]
+        mainPanel.setBackground(new java.awt.Color(209, 209, 209)); // [209,209,209]
 
         jLabel1.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Game directory:");
@@ -149,41 +148,31 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         assetsDirTextField.setText(serverContext.getGameDirectoryPath());
 
         fileChooseButton.setText("...");
-        fileChooseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileChooseButtonActionPerformed();
-            }
-        });
+        fileChooseButton.addActionListener(evt -> fileChooseButtonActionPerformed());
+        fileChooseButton.setBackground(new java.awt.Color(255, 255, 255));
 
         replaceExistingAssets = false;
         replaceExistingAssetsCheckBox.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
         replaceExistingAssetsCheckBox.setText("Replace any existing asset");
-        replaceExistingAssetsCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                replaceExistingAssets = replaceExistingAssetsCheckBox.isSelected();
-            }
-        });
+        replaceExistingAssetsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
+        replaceExistingAssetsCheckBox.addActionListener(evt -> replaceExistingAssets = replaceExistingAssetsCheckBox.isSelected());
 
         downloadAssetsButton.setFont(new Font("Segoe UI", 1, 13)); // NOI18N
         downloadAssetsButton.setText("Download Assets ");
-        downloadAssetsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downloadAssetsButtonActionPerformed();
-            }
-        });
+        downloadAssetsButton.addActionListener(evt -> downloadAssetsButtonActionPerformed());
         downloadAssetsButton.setEnabled(true);
+        downloadAssetsButton.setBackground(new java.awt.Color(255, 255, 255));
 
         cancelDownloadButton.setFont(new Font("Segoe UI", 1, 13)); // NOI18N
         cancelDownloadButton.setText("Cancel");
-        cancelDownloadButton.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (task != null) {
-                    task.cancel(true);
-                }
-                progressBar.setValue(0);
+        cancelDownloadButton.addActionListener(evt -> {
+            if (task != null) {
+                task.cancel(true);
             }
+            progressBar.setValue(0);
         });
         cancelDownloadButton.setEnabled(false);
+        cancelDownloadButton.setBackground(new java.awt.Color(255, 255, 255));
         cancelDownloadButton.setVisible(false);
 
         progressTextArea.setEditable(false);

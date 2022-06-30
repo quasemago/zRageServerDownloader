@@ -4,6 +4,7 @@ import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.MapManager;
 import br.com.zrage.serverdownloader.core.models.GameMap;
 import br.com.zrage.serverdownloader.core.models.GameServer;
+import br.com.zrage.serverdownloader.core.utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +18,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class SwingServerSelectedMapsFrame extends JDialog implements PropertyChangeListener {
-    private GameServer serverContext;
-    private MapManager mapManager;
+    private final GameServer serverContext;
+    private final MapManager mapManager;
     // TODO: Implement select maps to download frame.
     private List<GameMap> selectedMapsToDownload;
     private TaskSwing task;
@@ -49,7 +50,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                 }
 
                 // Test download map.
-                DownloadManager.appendToLogger("Downloading map: " + map.getRemoteFileName());
+                DownloadManager.appendToLogger("Downloading map: " + map.getName());
                 if (!mapManager.downloadMap(map)) {
                     DownloadManager.appendToLogger("*Error Downloading*: " + map.getRemoteFileName());
                     continue;
@@ -90,7 +91,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             replaceExistingMapsCheckBox.setEnabled(true);
             fileChooseButton.setEnabled(true);
             setCursor(null); //turn off the wait cursor
-            DownloadManager.appendToLogger("Download finalizado!");
+            DownloadManager.appendToLogger("Download completed!");
         }
     }
 
@@ -108,6 +109,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
+        utils.setSwingImageIcon(this);
         this.setTitle("zRageServerDownloader: " + serverContext.getName());
 
         // Init swing components.
@@ -144,7 +146,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainPanel.setBackground(new java.awt.Color(242, 242, 242)); // [209,209,209]
+        mainPanel.setBackground(new java.awt.Color(209, 209, 209)); // [209,209,209]
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Game maps directory:");
@@ -152,26 +154,26 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         mapsDirTextField.setText(serverContext.getMapsDirectoryPath());
 
         fileChooseButton.setText("...");
+        fileChooseButton.setBackground(new java.awt.Color(255, 255, 255));
         fileChooseButton.addActionListener(evt -> fileChooseButtonActionPerformed());
 
         replaceExistingMaps = false;
         replaceExistingMapsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         replaceExistingMapsCheckBox.setText("Replace any existing maps");
+        replaceExistingMapsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
         replaceExistingMapsCheckBox.addActionListener(evt -> replaceExistingMaps = replaceExistingMapsCheckBox.isSelected());
 
         selectMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         selectMapsButton.setText("Select Maps");
-        selectMapsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectMapsButtonActionPerformed();
-            }
-        });
+        selectMapsButton.setBackground(new java.awt.Color(255, 255, 255));
+        selectMapsButton.addActionListener(evt -> selectMapsButtonActionPerformed());
 
         selectedMapsLabel.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         selectedMapsLabel.setText(selectedMapsToDownload.size() + "/" + totalMaps + " maps");
 
         downloadMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         downloadMapsButton.setText("Download Maps");
+        downloadMapsButton.setBackground(new java.awt.Color(255, 255, 255));
         downloadMapsButton.addActionListener(evt -> downloadMapsButtonActionPerformed());
         downloadMapsButton.setEnabled(true);
 

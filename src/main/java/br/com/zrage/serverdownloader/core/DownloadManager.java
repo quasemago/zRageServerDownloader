@@ -1,25 +1,33 @@
 package br.com.zrage.serverdownloader.core;
 
+import br.com.zrage.serverdownloader.core.models.ServersList;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.swing.*;
+import javax.swing.JTextArea;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.UUID;
 
 // TODO:
 public class DownloadManager {
+    private static final String SERVERS_CONTEXT_REMOTEFILE = "https://api.zrage.com.br/mapdownloader/getServersList.php";
     protected static final Path mainTempFolderPath = Paths.get(System.getProperty("java.io.tmpdir")).resolve("zrageTempDownloader");
     protected final Path tempFolderPath;
     protected static JTextArea logTextArea;
@@ -110,5 +118,16 @@ public class DownloadManager {
         } catch (NullPointerException err) {
             err.printStackTrace();
         }
+    }
+
+    public static ServersList getAvailableServersList() {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.add("user-agent", "Application");
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
+        return restTemplate.exchange(SERVERS_CONTEXT_REMOTEFILE, HttpMethod.GET, entity, ServersList.class).getBody();
     }
 }

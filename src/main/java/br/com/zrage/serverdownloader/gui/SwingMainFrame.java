@@ -17,6 +17,7 @@ public class SwingMainFrame extends JDialog {
 
     public SwingMainFrame(JFrame parent, boolean modal) {
         super(parent, modal);
+        utils.setSwingImageIcon(this);
         this.setTitle("zRageServerDownloader");
         initComponents();
     }
@@ -44,16 +45,13 @@ public class SwingMainFrame extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        mainPanel.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        mainPanel.registerKeyboardAction(evt ->
+                onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainPanel.setBackground(new java.awt.Color(242, 242, 242)); // [209,209,209]
+        mainPanel.setBackground(new java.awt.Color(209, 209, 209));
 
         // Available Servers.
-        List<GameServer> serverList = utils.getAvailableServersList().getServers();
+        List<GameServer> serverList = DownloadManager.getAvailableServersList().getServers();
         availableServersList = new javax.swing.JList<>(new Vector<>(serverList));
         availableServersList.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         availableServersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -65,7 +63,7 @@ public class SwingMainFrame extends JDialog {
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (renderer instanceof JLabel && value instanceof GameServer) {
-                    ((JLabel) renderer).setText(((GameServer) value).getName());
+                    ((JLabel) renderer).setText("- " + ((GameServer) value).getName());
                 }
                 return renderer;
             }
@@ -81,37 +79,35 @@ public class SwingMainFrame extends JDialog {
         fastdlUrlLabel.setPreferredSize(new java.awt.Dimension(37, 29));
 
         fastDLUrlTextField.setEditable(false);
+        fastDLUrlTextField.setBackground(new java.awt.Color(255, 255, 255, 229));
         fastDLUrlTextField.setText("");
 
         startButton.setText("START");
         startButton.setEnabled(false);
-        startButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startButtonActionPerformed();
-            }
-        });
+        startButton.setBackground(new java.awt.Color(255, 255, 255));
+        startButton.addActionListener(evt -> startButtonActionPerformed());
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Type:");
 
-        typeMapsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        typeMapsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         typeMapsCheckBox.setText("Maps");
         typeMapsCheckBox.setSelected(true);
-        typeMapsCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (typeMapsCheckBox.isSelected()) {
-                    typeAssetsCheckBox.setSelected(false);
-                }
+        typeMapsCheckBox.setFocusable(false);
+        typeMapsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
+        typeMapsCheckBox.addActionListener(evt -> {
+            if (typeMapsCheckBox.isSelected()) {
+                typeAssetsCheckBox.setSelected(false);
             }
         });
 
-        typeAssetsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        typeAssetsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         typeAssetsCheckBox.setText("Assets");
-        typeAssetsCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (typeAssetsCheckBox.isSelected()) {
-                    typeMapsCheckBox.setSelected(false);
-                }
+        typeAssetsCheckBox.setFocusable(false);
+        typeAssetsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
+        typeAssetsCheckBox.addActionListener(evt -> {
+            if (typeAssetsCheckBox.isSelected()) {
+                typeMapsCheckBox.setSelected(false);
             }
         });
 
@@ -143,7 +139,7 @@ public class SwingMainFrame extends JDialog {
         mainPanelLayout.setVerticalGroup(
                 mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -165,8 +161,10 @@ public class SwingMainFrame extends JDialog {
 
         aboutButton.setText("About");
         aboutButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        aboutButton.setBackground(new java.awt.Color(255, 255, 255));
         aboutButton.setFocusable(false);
-        aboutButton.setBorder(null);
+        aboutButton.setBorderPainted(false);
+        aboutButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         aboutButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aboutButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         aboutButton.addActionListener(new java.awt.event.ActionListener() {
