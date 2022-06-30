@@ -61,9 +61,9 @@ public class DownloadManager {
     }
 
     protected void decompress(String filePath, String targetPath) throws IOException {
-        var input = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(filePath)));
-        var output = new FileOutputStream(targetPath);
-        try (input; output) {
+        BZip2CompressorInputStream input = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(filePath)));
+        FileOutputStream output = new FileOutputStream(targetPath);
+        try {
             IOUtils.copy(input, output);
         } catch (IOException err) {
             err.printStackTrace();
@@ -78,7 +78,9 @@ public class DownloadManager {
         }
 
         try {
-            Files.move(filePath, targetPath);
+            //Files.move(filePath, targetPath);
+            Files.copy(filePath, targetPath);
+            FileUtils.deleteQuietly(filePath.toFile());
         } catch (IOException err) {
             err.printStackTrace();
         }
