@@ -73,6 +73,10 @@ public class GameServer {
         this.steamAppId = steamAppId;
     }
 
+    public String getGameDirectory() {
+        return gameDirectory;
+    }
+
     public String getGameDirectoryPath() {
         final String registryValue = Advapi32Util.registryGetStringValue(
                 WinReg.HKEY_CURRENT_USER, "Software\\Valve\\Steam", "SteamPath");
@@ -122,6 +126,10 @@ public class GameServer {
             }
         }
         return "";
+    }
+
+    public String getMapsDirectory() {
+        return mapsDirectory;
     }
 
     public String getMapsDirectoryPath() {
