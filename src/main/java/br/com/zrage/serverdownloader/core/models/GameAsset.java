@@ -5,7 +5,6 @@ public class GameAsset {
     private String fileName;
     private String filePath;
     private String remoteFileName;
-    private boolean failed;
 
     public GameAsset(String rawFileName, GameServer server) {
         // models/to/folder/model_example.mdl
@@ -51,13 +50,5 @@ public class GameAsset {
 
     public void setRemoteFileName(String remoteFileName) {
         this.remoteFileName = remoteFileName;
-    }
-
-    public void setFailed(boolean failed) {
-        this.failed = failed;
-    }
-
-    public boolean isFailed() {
-        return failed;
     }
 }
