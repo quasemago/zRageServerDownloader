@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\bruno\Desktop\zrg\serverdownloader-0.0.1.jar</jar>
-  <outfile>C:\Users\bruno\Desktop\zrg\zRageServerDownloaderApp.exe</outfile>
+  <jar>C:\Users\bruno\OneDrive\Workspace\Projects\zRageServerDownloader\launch4j\serverdownloader-0.5.jar</jar>
+  <outfile>C:\Users\bruno\OneDrive\Workspace\Projects\zRageServerDownloader\launch4j\zRageServerDownloaderApp.exe</outfile>
   <errTitle>Download java</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>C:\Users\bruno\Desktop\zrg\567187316343439373.ico</icon>
+  <icon>C:\Users\bruno\OneDrive\Workspace\Projects\zRageServerDownloader\launch4j\567187316343439373.ico</icon>
   <jre>
     <path></path>
     <bundledJre64Bit>false</bundledJre64Bit>
@@ -25,12 +25,12 @@
     <opt>-XX:+NeverActAsServerClassMachine -XX:MinHeapFreeRatio=0 -XX:MaxHeapFreeRatio=0</opt>
   </jre>
   <versionInfo>
-    <fileVersion>0.0.0.1</fileVersion>
-    <txtFileVersion>0.0.1.BETA</txtFileVersion>
+    <fileVersion>0.5.0.0</fileVersion>
+    <txtFileVersion>0.5.B1</txtFileVersion>
     <fileDescription>Downloader for Zombie Rage server assets</fileDescription>
     <copyright>Copyright @ 2022 - Zombie Rage</copyright>
-    <productVersion>0.0.0.1</productVersion>
-    <txtProductVersion>0.0.1.BETA</txtProductVersion>
+    <productVersion>0.5.0.0</productVersion>
+    <txtProductVersion>0.5.B1</txtProductVersion>
     <productName>zRageServerDownloader</productName>
     <companyName>Zombie Rage</companyName>
     <internalName>zRageServerDownloader</internalName>
