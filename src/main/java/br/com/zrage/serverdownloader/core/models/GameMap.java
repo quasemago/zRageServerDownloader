@@ -21,7 +21,7 @@ public class GameMap {
         // Resolve names.
         this.fileName = name + fileExt;
         this.localFileName = name + ".bsp";
-        this.remoteFileName = server.getFastDLUrl() + fileName;
+        this.remoteFileName = server.getFastDLUrl() + "maps/" + fileName;
     }
 
     public boolean existsInMapsFolder() {

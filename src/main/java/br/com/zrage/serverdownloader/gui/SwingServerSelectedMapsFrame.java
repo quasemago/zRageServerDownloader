@@ -16,7 +16,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class SwingServerSelectedFrame extends JDialog implements PropertyChangeListener {
+public class SwingServerSelectedMapsFrame extends JDialog implements PropertyChangeListener {
     private GameServer serverContext;
     private MapManager mapManager;
     // TODO: Implement select maps to download frame.
@@ -40,7 +40,7 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
 
                 // Skip map if already exists, if enabled.
                 if (!replaceExistingMaps && mapManager.mapExists(map)) {
-                    DownloadManager.appendToLogger("Mapa " + map.getName() + " já existe, skipando!");
+                    //DownloadManager.appendToLogger("Mapa " + map.getName() + " já existe, skipando!");
 
                     // Update progress.
                     progress++;
@@ -49,8 +49,7 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
                 }
 
                 // Test download map.
-                DownloadManager.appendToLogger("Baixando mapa " + map.getName());
-                System.out.println("Baixando mapa " + map.getName());
+                DownloadManager.appendToLogger("Baixando mapa " + map.getRemoteFileName());
                 mapManager.downloadMap(map);
 
                 // Test decompress map.
@@ -88,15 +87,11 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
             downloadMapsButton.setVisible(true);
             replaceExistingMapsCheckBox.setEnabled(true);
             setCursor(null); //turn off the wait cursor
-
-            // Delete temp folder after download.
-            progressBar.setValue(0);
             DownloadManager.appendToLogger("Download finalizado!");
-            DownloadManager.deleteAllTempFiles();
         }
     }
 
-    public SwingServerSelectedFrame(java.awt.Frame parent, boolean modal, GameServer server) {
+    public SwingServerSelectedMapsFrame(java.awt.Frame parent, boolean modal, GameServer server) {
         super(parent, modal);
 
         // Set server context.
@@ -180,7 +175,7 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
         });
 
         selectedMapsLabel.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        selectedMapsLabel.setText(selectedMapsToDownload.size() + " / " + totalMaps + " maps");
+        selectedMapsLabel.setText(selectedMapsToDownload.size() + "/" + totalMaps + " maps");
 
         downloadMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         downloadMapsButton.setText("Download Maps");
@@ -230,8 +225,8 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
                                                 .addGap(80, 80, 80)
                                                 .addComponent(selectMapsButton)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(selectedMapsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
+                                                .addComponent(selectedMapsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(downloadMapsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(cancelDownloadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -254,9 +249,9 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
                                         .addComponent(selectMapsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(selectedMapsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
         );
 
@@ -310,6 +305,8 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
         replaceExistingMapsCheckBox.setEnabled(false);
         cancelDownloadButton.setEnabled(true);
         cancelDownloadButton.setVisible(true);
+
+        progressBar.setValue(0);
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         // Create download task.
@@ -337,7 +334,7 @@ public class SwingServerSelectedFrame extends JDialog implements PropertyChangeL
 
     // Start swing selected server frame.
     public static void StartSwingServerFrame(GameServer server) {
-        SwingServerSelectedFrame ex = new SwingServerSelectedFrame(new javax.swing.JFrame(), true, server);
+        SwingServerSelectedMapsFrame ex = new SwingServerSelectedMapsFrame(new javax.swing.JFrame(), true, server);
         ex.setLocationRelativeTo(null);
         ex.setVisible(true);
     }

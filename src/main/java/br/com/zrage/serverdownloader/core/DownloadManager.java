@@ -6,8 +6,11 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.swing.*;
 import java.io.*;
@@ -16,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // TODO:
 public class DownloadManager {
@@ -29,12 +33,31 @@ public class DownloadManager {
         new File(tempFolderPath.toString()).mkdirs();
     }
 
-    protected void download(String url, Path targetPath) {
+    protected boolean download(String url, Path targetPath) {
         WebClient client = WebClient.builder()
                 .baseUrl(url)
                 .build();
-        final Flux<DataBuffer> dataBufferFlux = client.get().retrieve().bodyToFlux(DataBuffer.class);
+        Flux<DataBuffer> dataBufferFlux = client.get()
+                .retrieve()
+                .bodyToFlux(DataBuffer.class)
+                .onErrorResume(WebClientResponseException.class, ex -> {
+                    if (ex.getRawStatusCode() == 404) {
+                        return Flux.empty();
+                    }
+                    else {
+                        return Mono.error(ex);
+                    }
+                });
         DataBufferUtils.write(dataBufferFlux, targetPath, StandardOpenOption.CREATE).block();
+
+        try {
+            return Files.size(targetPath) > 0;
+        }
+        catch (IOException err) {
+            err.printStackTrace();
+        }
+
+        return false;
     }
 
     protected void decompress(String filePath, String targetPath) throws IOException {

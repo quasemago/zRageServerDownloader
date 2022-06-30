@@ -15,19 +15,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class GameServer {
     @JsonProperty("name")
     private String name;
-    @JsonProperty("mapList")
+    @JsonProperty("mapListUrl")
     private String csvMapListUrl;
-    // TODO:
-    @JsonIgnore
+    @JsonProperty("assetsListUrl")
     private String assetsListUrl;
-    @JsonProperty("fastDL")
+    @JsonProperty("fastDLUrl")
     private String fastDLUrl;
-    @JsonProperty("appID")
+    @JsonProperty("steamAppId")
     private int steamAppId;
+    @JsonProperty("gameDirectory")
+    private String gameDirectory;
     @JsonProperty("mapsDirectory")
     private String mapsDirectory;
 
@@ -71,7 +73,7 @@ public class GameServer {
         this.steamAppId = steamAppId;
     }
 
-    public String getMapsDirectoryPath() {
+    public String getGameDirectoryPath() {
         final String registryValue = Advapi32Util.registryGetStringValue(
                 WinReg.HKEY_CURRENT_USER, "Software\\Valve\\Steam", "SteamPath");
 
@@ -113,13 +115,17 @@ public class GameServer {
                     final String installDir = acfFileContents.split("\"installdir\"		\"")[1].split("\"")[0];
 
                     // Resolve game app maps directory.
-                    return (str + "\\steamapps\\common\\" + installDir + mapsDirectory).replace("\\\\", "\\");
+                    return (str + "\\steamapps\\common\\" + installDir + gameDirectory).replace("\\\\", "\\");
                 }
             } catch (IOException err) {
                 err.printStackTrace();
             }
         }
         return "";
+    }
+
+    public String getMapsDirectoryPath() {
+        return getGameDirectoryPath() + mapsDirectory;
     }
 
     public List<GameMap> getGameMapList() {
@@ -132,9 +138,29 @@ public class GameServer {
 
         List<String> mapList = Arrays.stream(responseCSV.replaceAll("(\r\n|\n\r|\r|\n)", "").split(",")).toList();
         List<GameMap> gameMapList = new ArrayList<>();
+
         for (String str : mapList) {
             gameMapList.add(new GameMap(str, this));
         }
+
         return gameMapList;
+    }
+
+    public List<GameAsset> getGameAssetsList() {
+        WebClient webClient = WebClient.create();
+        String response = webClient.get()
+                .uri(assetsListUrl)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        List<String> assetsList = Arrays.stream(response.replaceAll("(\r\n|\n\r|\r|\n)", "").split(";")).toList();
+        List<GameAsset> gameAssetsList = new ArrayList<>();
+
+        for (String str : assetsList) {
+            gameAssetsList.add(new GameAsset(str, this));
+        }
+
+        return gameAssetsList;
     }
 }

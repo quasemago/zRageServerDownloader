@@ -26,9 +26,9 @@ public class MapManager extends DownloadManager {
         this.mapsDirectoryPath = path;
     }
 
-    public void downloadMap(GameMap map) {
+    public boolean downloadMap(GameMap map) {
         final Path tempFile = tempFolderPath.resolve(map.getFileName());
-        this.download(map.getRemoteFileName(), tempFile);
+        return this.download(map.getRemoteFileName(), tempFile);
     }
 
     public void decompressMap(GameMap map) {
