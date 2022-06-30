@@ -35,6 +35,12 @@ class ZRageServerDownloaderApplicationTests {
         System.out.println("filePath=" + asset.getFilePath());
         System.out.println("remoteFileName=" + asset.getRemoteFileName());
 
+        AssetManager assetManager = new AssetManager(selectedServer);
+        assetManager.setGameDirectoryPath(Paths.get("C:\\Users\\bruno\\Desktop\\testdownload"));
+        assetManager.downloadAsset(asset);
+        assetManager.decompressAsset(asset);
+        assetManager.moveToGameFolder(asset);
+
 
         List<GameMap> mapList = selectedServer.getGameMapList();
         MapManager mapManager = new MapManager(selectedServer);

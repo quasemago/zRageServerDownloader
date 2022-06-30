@@ -7,6 +7,7 @@ import com.sun.jna.platform.win32.WinReg;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GameServer {
     @JsonProperty("name")
@@ -90,39 +92,52 @@ public class GameServer {
                 return "";
             }
 
-            try {
-                // Read libraryfolders.vdf content.
-                final String libraryInfoFileContents = Files.readString(libraryFoldersVdf);
+            StringBuilder strBuilder = new StringBuilder();
 
-                // Search for steam library folders paths.
-                Pattern pattern = Pattern.compile("\"(\\d+?)\"[\\r\\n]{1,2}\\s*?\\{[\\r\\n]{1,2}\\s*?\"path\"\\s*?\"([^\"]*?)\"");
-                Matcher matcher = pattern.matcher(libraryInfoFileContents);
+            // Read libraryfolders.vdf content.
+            try (Stream<String> stream = Files.lines(libraryFoldersVdf, StandardCharsets.UTF_8)) {
+                //Read the content with Stream
+                stream.forEach(s -> strBuilder.append(s).append("\n"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-                List<String> libraryFolders = new ArrayList<>();
-                while (matcher.find()) {
-                    libraryFolders.add(matcher.group(2));
+            final String libraryInfoFileContents = strBuilder.toString();
+
+            // Search for steam library folders paths.
+            Pattern pattern = Pattern.compile("\"(\\d+?)\"[\\r\\n]{1,2}\\s*?\\{[\\r\\n]{1,2}\\s*?\"path\"\\s*?\"([^\"]*?)\"");
+            Matcher matcher = pattern.matcher(libraryInfoFileContents);
+
+            List<String> libraryFolders = new ArrayList<>();
+            while (matcher.find()) {
+                libraryFolders.add(matcher.group(2));
+            }
+
+            // Search for appId game.
+            strBuilder.setLength(0);
+            for (String str : libraryFolders) {
+                str = str.replace("program files", "Program Files");
+
+                // Resolve acf file path.
+                final Path acfFile = Paths.get(str + "\\steamapps\\appmanifest_" + steamAppId + ".acf");
+
+                // Check if acf file exists.
+                if (!Files.exists(acfFile)) {
+                    continue;
                 }
 
-                // Search for appId game.
-                for (String str : libraryFolders) {
-                    str = str.replace("program files", "Program Files");
-
-                    // Resolve acf file path.
-                    final Path acfFile = Paths.get(str + "\\steamapps\\appmanifest_" + steamAppId + ".acf");
-
-                    // Check if acf file exists.
-                    if (!Files.exists(acfFile)) {
-                        continue;
-                    }
-
-                    final String acfFileContents = Files.readString(acfFile);
-                    final String installDir = acfFileContents.split("\"installdir\"		\"")[1].split("\"")[0];
-
-                    // Resolve game app maps directory.
-                    return (str + "\\steamapps\\common\\" + installDir + gameDirectory).replace("\\\\", "\\");
+                try (Stream<String> stream = Files.lines(acfFile, StandardCharsets.UTF_8)) {
+                    //Read the content with Stream
+                    stream.forEach(s -> strBuilder.append(s).append("\n"));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException err) {
-                err.printStackTrace();
+
+                final String acfFileContents = strBuilder.toString();
+                final String installDir = acfFileContents.split("\"installdir\"		\"")[1].split("\"")[0];
+
+                // Resolve game app maps directory.
+                return (str + "\\steamapps\\common\\" + installDir + gameDirectory).replace("\\\\", "\\");
             }
         }
         return "";
@@ -144,7 +159,7 @@ public class GameServer {
                 .bodyToMono(String.class)
                 .block();
 
-        List<String> mapList = Arrays.stream(responseCSV.replaceAll("(\r\n|\n\r|\r|\n)", "").split(",")).toList();
+        List<String> mapList = Arrays.stream(responseCSV.replaceAll("(\r\n|\n\r|\r|\n)", "").split(",")).collect(Collectors.toList());
         List<GameMap> gameMapList = new ArrayList<>();
 
         for (String str : mapList) {
@@ -162,7 +177,7 @@ public class GameServer {
                 .bodyToMono(String.class)
                 .block();
 
-        List<String> assetsList = Arrays.stream(response.replaceAll("(\r\n|\n\r|\r|\n)", "").split(";")).toList();
+        List<String> assetsList = Arrays.stream(response.replaceAll("(\r\n|\n\r|\r|\n)", "").split(";")).collect(Collectors.toList());
         List<GameAsset> gameAssetsList = new ArrayList<>();
 
         for (String str : assetsList) {

@@ -49,18 +49,18 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                     continue;
                 }
 
-                // Test download asset.
+                // Download asset.
                 DownloadManager.appendToLogger("Baixando: " + asset.getRemoteFileName());
                 if (!assetManager.downloadAsset(asset)) {
                     DownloadManager.appendToLogger("*ERROR* ao tentar baixar: " + asset.getRemoteFileName());
                     continue;
                 }
 
-                // Test decompress asset.
+                // Decompress asset.
                 DownloadManager.appendToLogger("Extraindo: " + asset.getFilePath());
                 assetManager.decompressAsset(asset);
 
-                // Move to asset directory.
+                // Move to game directory.
                 assetManager.moveToGameFolder(asset);
 
                 // Update progress.
