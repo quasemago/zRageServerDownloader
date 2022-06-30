@@ -2,9 +2,7 @@ package br.com.zrage.serverdownloader.gui;
 
 import br.com.zrage.serverdownloader.core.AssetManager;
 import br.com.zrage.serverdownloader.core.DownloadManager;
-import br.com.zrage.serverdownloader.core.MapManager;
 import br.com.zrage.serverdownloader.core.models.GameAsset;
-import br.com.zrage.serverdownloader.core.models.GameMap;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 
 import javax.swing.*;
@@ -50,14 +48,14 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                 }
 
                 // Download asset.
-                DownloadManager.appendToLogger("Baixando: " + asset.getRemoteFileName());
+                DownloadManager.appendToLogger("Downloading: " + asset.getRemoteFileName());
                 if (!assetManager.downloadAsset(asset)) {
-                    DownloadManager.appendToLogger("*ERROR* ao tentar baixar: " + asset.getRemoteFileName());
+                    DownloadManager.appendToLogger("*Error Downloading*: " + asset.getRemoteFileName());
                     continue;
                 }
 
                 // Decompress asset.
-                DownloadManager.appendToLogger("Extraindo: " + asset.getFilePath());
+                DownloadManager.appendToLogger("Extracting: " + asset.getFilePath());
                 assetManager.decompressAsset(asset);
 
                 // Move to game directory.

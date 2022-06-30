@@ -1,7 +1,6 @@
 package br.com.zrage.serverdownloader.core;
 
 import br.com.zrage.serverdownloader.core.models.GameAsset;
-import br.com.zrage.serverdownloader.core.models.GameMap;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 
 import java.io.File;
@@ -9,13 +8,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 public class AssetManager extends DownloadManager {
     private Path gameDirectoryPath;
 
     public AssetManager(GameServer server) {
-        super(server);
+        super();
 
         // Persiste o path da pasta do jogo.
         this.gameDirectoryPath = Paths.get(server.getGameDirectoryPath());

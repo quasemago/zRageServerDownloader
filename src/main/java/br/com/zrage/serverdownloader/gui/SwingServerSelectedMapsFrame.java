@@ -49,12 +49,15 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                 }
 
                 // Test download map.
-                DownloadManager.appendToLogger("Baixando mapa: " + map.getRemoteFileName());
-                mapManager.downloadMap(map);
+                DownloadManager.appendToLogger("Downloading map: " + map.getRemoteFileName());
+                if (!mapManager.downloadMap(map)) {
+                    DownloadManager.appendToLogger("*Error Downloading*: " + map.getRemoteFileName());
+                    continue;
+                }
 
                 // Test decompress map.
                 if (map.isCompressed()) {
-                    DownloadManager.appendToLogger("Extraindo mapa: " + map.getName());
+                    DownloadManager.appendToLogger("Extracting map: " + map.getName());
                     mapManager.decompressMap(map);
                 }
 

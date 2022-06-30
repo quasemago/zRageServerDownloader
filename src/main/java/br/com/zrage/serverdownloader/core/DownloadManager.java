@@ -1,6 +1,5 @@
 package br.com.zrage.serverdownloader.core;
 
-import br.com.zrage.serverdownloader.core.models.GameServer;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
@@ -13,7 +12,10 @@ import reactor.core.publisher.Mono;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 // TODO:
@@ -23,7 +25,7 @@ public class DownloadManager {
     protected static JTextArea logTextArea;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public DownloadManager(GameServer server) {
+    public DownloadManager() {
         this.tempFolderPath = mainTempFolderPath.resolve(UUID.randomUUID().toString().toUpperCase());
         new File(tempFolderPath.toString()).mkdirs();
     }

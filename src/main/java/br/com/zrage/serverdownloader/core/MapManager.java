@@ -12,7 +12,7 @@ public class MapManager extends DownloadManager {
     private Path mapsDirectoryPath;
 
     public MapManager(GameServer server) {
-        super(server);
+        super();
 
         // Persiste o path da pasta "maps" do jogo.
         this.mapsDirectoryPath = Paths.get(server.getMapsDirectoryPath());
