@@ -39,6 +39,8 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                 return null;
             }
 
+            mapManager.setMapsDirectoryPath(gameDirPath);
+
             // Get available maps to download.
             List<GameMap> mapList = mapManager.getMapsToDownload(replaceExistingMapsCheckBox.isSelected());
             if (mapList.isEmpty()) {

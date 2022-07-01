@@ -39,6 +39,8 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                 return null;
             }
 
+            assetManager.setGameDirectoryPath(gameDirPath);
+
             // Get available assets to download.
             List<GameAsset> assetsList = assetManager.getAssetsToDownload(replaceExistingAssetsCheckBox.isSelected());
             if (assetsList.isEmpty()) {
