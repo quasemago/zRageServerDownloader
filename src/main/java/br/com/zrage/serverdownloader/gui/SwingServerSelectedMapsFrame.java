@@ -14,6 +14,8 @@ import java.awt.event.WindowAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -21,22 +23,33 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     private final GameServer serverContext;
     private final MapManager mapManager;
     private TaskSwing task;
+    private boolean downloadFailed;
 
     private class TaskSwing extends SwingWorker<Void, Void> {
         @Override
         public Void doInBackground() {
-            int progress = 0;
             setProgress(0);
+            downloadFailed = false;
 
+            // Get selected game dir and validate if exists.
+            Path gameDirPath = Paths.get(mapsDirTextField.getText());
+            if (!Files.exists(gameDirPath)) {
+                DownloadManager.appendToSwingLogger("*ERROR*: Selected game maps directory not found!");
+                downloadFailed = true;
+                return null;
+            }
+
+            // Get available maps to download.
             List<GameMap> mapList = mapManager.getMapsToDownload(replaceExistingMapsCheckBox.isSelected());
-
             if (mapList.isEmpty()) {
                 return null;
             }
 
             DownloadManager.appendToSwingLogger("Fetched " + mapList.size() + " pending maps to download from " + serverContext.getName() + " server!");
 
+            int progress = 0;
             double selectedCount = mapList.size();
+
             for (GameMap map : mapList) {
                 // Task swing canceled.
                 if (isCancelled()) {
@@ -83,12 +96,12 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             downloadMapsButton.setVisible(true);
             replaceExistingMapsCheckBox.setEnabled(true);
             mapsDirChooseButton.setEnabled(true);
-            mapsDirTextField.setEnabled(true);
+            mapsDirTextField.setEditable(true);
 
             // Download completed alert.
             Toolkit.getDefaultToolkit().beep();
             setCursor(null); //turn off the wait cursor
-            DownloadManager.appendToSwingLogger("Download completed!");
+            DownloadManager.appendToSwingLogger(downloadFailed ? "Download failed!" : "Download completed!");
         }
     }
 
@@ -243,15 +256,8 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         fc.showOpenDialog(this);
 
         File file = fc.getSelectedFile();
-        if (file == null) {
-            return;
-        }
-
-        if (file.exists()) {
-            String newMapsDirPath = file.getPath();
-
-            mapsDirTextField.setText(newMapsDirPath);
-            mapManager.setMapsDirectoryPath(Paths.get(newMapsDirPath));
+        if (file != null && file.exists()) {
+            mapsDirTextField.setText(file.getPath());
         }
     }
 
@@ -261,7 +267,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         downloadMapsButton.setVisible(false);
         replaceExistingMapsCheckBox.setEnabled(false);
         mapsDirChooseButton.setEnabled(false);
-        mapsDirTextField.setEnabled(false);
+        mapsDirTextField.setEditable(false);
 
         // Enable/show cancel button.
         cancelDownloadButton.setEnabled(true);
