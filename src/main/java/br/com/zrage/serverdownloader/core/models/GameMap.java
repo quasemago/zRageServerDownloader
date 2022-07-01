@@ -1,5 +1,8 @@
 package br.com.zrage.serverdownloader.core.models;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class GameMap {
     private String name;
     private String fileName; // name.bsp{.bz2}
@@ -67,5 +70,10 @@ public class GameMap {
 
     public void setRemoteFileName(String remoteFileName) {
         this.remoteFileName = remoteFileName;
+    }
+
+    public boolean existsInFolder(Path folder) {
+        final Path targetFile = folder.resolve(this.getLocalFileName());
+        return Files.exists(targetFile);
     }
 }

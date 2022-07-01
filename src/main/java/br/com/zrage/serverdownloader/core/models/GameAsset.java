@@ -1,5 +1,8 @@
 package br.com.zrage.serverdownloader.core.models;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class GameAsset {
     private String localFileName;
     private String fileName;
@@ -50,5 +53,10 @@ public class GameAsset {
 
     public void setRemoteFileName(String remoteFileName) {
         this.remoteFileName = remoteFileName;
+    }
+
+    public boolean existsInFolder(Path folder) {
+        final Path targetFile = folder.resolve(this.getFilePath());
+        return Files.exists(targetFile);
     }
 }

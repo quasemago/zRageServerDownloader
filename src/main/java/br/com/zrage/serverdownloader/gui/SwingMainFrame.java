@@ -19,40 +19,28 @@ public class SwingMainFrame extends JDialog {
         super(parent, modal);
         utils.setSwingImageIcon(this);
         this.setTitle("zRageServerDownloader");
+
+        // Init swing components.
         initComponents();
     }
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
+        /* Main panel. */
         JPanel mainPanel = new JPanel();
-        JScrollPane jScrollPane1 = new JScrollPane();
-        JLabel jLabel1 = new JLabel();
-        JLabel jLabel2 = new JLabel();
-        JLabel fastdlUrlLabel = new JLabel();
-        fastDLUrlTextField = new JTextField();
-        startButton = new JButton();
-        JToolBar jToolBar1 = new JToolBar();
-        aboutButton = new JButton();
-        typeMapsCheckBox = new JCheckBox();
-        typeAssetsCheckBox = new JCheckBox();
-
-        // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
-        mainPanel.registerKeyboardAction(evt ->
-                onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
         mainPanel.setBackground(new java.awt.Color(209, 209, 209));
 
-        // Available Servers.
+        // call onCancelPanel() on ESCAPE.
+        mainPanel.registerKeyboardAction(evt ->
+                onCancelPanel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        /* Available servers section. */
+        JLabel availableServersLabel = new JLabel();
+        availableServersLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        availableServersLabel.setText("Available Servers:");
+
         List<GameServer> serverList = DownloadManager.getAvailableServersList().getServers();
-        availableServersList = new javax.swing.JList<>(new Vector<>(serverList));
+        availableServersList = new JList<>(new Vector<>(serverList));
         availableServersList.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         availableServersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         availableServersList.addListSelectionListener(evt -> availableServersListValueChanged((GameServer) availableServersList.getSelectedValue()));
@@ -68,28 +56,16 @@ public class SwingMainFrame extends JDialog {
                 return renderer;
             }
         });
-        jScrollPane1.setViewportView(availableServersList);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("Available Servers:");
+        JScrollPane availableServersPanel = new JScrollPane();
+        availableServersPanel.setViewportView(availableServersList);
 
-        fastdlUrlLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        fastdlUrlLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        fastdlUrlLabel.setText("FastDL Url:");
-        fastdlUrlLabel.setPreferredSize(new java.awt.Dimension(37, 29));
+        /* Download types checkbox section. */
+        JLabel typesLabel = new JLabel();
+        typesLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        typesLabel.setText("Type:");
 
-        fastDLUrlTextField.setEditable(false);
-        fastDLUrlTextField.setBackground(new java.awt.Color(255, 255, 255, 229));
-        fastDLUrlTextField.setText("");
-
-        startButton.setText("START");
-        startButton.setEnabled(false);
-        startButton.setBackground(new java.awt.Color(255, 255, 255));
-        startButton.addActionListener(evt -> startButtonActionPerformed());
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setText("Type:");
-
+        typeMapsCheckBox = new JCheckBox();
         typeMapsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         typeMapsCheckBox.setText("Maps");
         typeMapsCheckBox.setSelected(true);
@@ -101,6 +77,7 @@ public class SwingMainFrame extends JDialog {
             }
         });
 
+        typeAssetsCheckBox = new JCheckBox();
         typeAssetsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         typeAssetsCheckBox.setText("Assets");
         typeAssetsCheckBox.setFocusable(false);
@@ -111,54 +88,30 @@ public class SwingMainFrame extends JDialog {
             }
         });
 
-        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanelLayout.setHorizontalGroup(
-                mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                                                .addComponent(fastdlUrlLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(fastDLUrlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(mainPanelLayout.createSequentialGroup()
-                                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addGap(53, 53, 53)
-                                                .addComponent(jLabel2)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(typeMapsCheckBox)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(typeAssetsCheckBox))
-                                        .addComponent(jScrollPane1))
-                                .addContainerGap())
-                        .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        mainPanelLayout.setVerticalGroup(
-                mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel2)
-                                        .addComponent(typeAssetsCheckBox)
-                                        .addComponent(typeMapsCheckBox))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(startButton, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                                        .addComponent(fastDLUrlTextField)
-                                        .addComponent(fastdlUrlLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap())
-        );
+        /* Footer fastdl section. */
+        JLabel fastDLUrlLabel = new JLabel();
+        fastDLUrlLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        fastDLUrlLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        fastDLUrlLabel.setText("FastDL Url:");
+        fastDLUrlLabel.setPreferredSize(new java.awt.Dimension(37, 29));
 
+        fastDLUrlTextField = new JTextField();
+        fastDLUrlTextField.setEditable(false);
+        fastDLUrlTextField.setBackground(new java.awt.Color(240, 240, 240));
+        fastDLUrlTextField.setText("");
+
+        startButton = new JButton();
+        startButton.setText("START");
+        startButton.setEnabled(false);
+        startButton.setBackground(new java.awt.Color(255, 255, 255));
+        startButton.addActionListener(evt -> startButtonActionPerformed());
+
+        /* Head toolbar buttons section. */
+        JToolBar jToolBar1 = new JToolBar();
         jToolBar1.setRollover(false);
         jToolBar1.setFloatable(false);
 
+        aboutButton = new JButton();
         aboutButton.setText("About");
         aboutButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         aboutButton.setBackground(new java.awt.Color(255, 255, 255));
@@ -175,16 +128,71 @@ public class SwingMainFrame extends JDialog {
 
         jToolBar1.add(aboutButton);
 
+        // Generated code by Netbeans form editor.
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+                mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                                                .addComponent(fastDLUrlLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(fastDLUrlTextField)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(mainPanelLayout.createSequentialGroup()
+                                                .addComponent(availableServersLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                                                .addGap(47, 47, 47)
+                                                .addComponent(typesLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(typeMapsCheckBox)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(typeAssetsCheckBox)
+                                                .addGap(6, 6, 6))
+                                        .addComponent(availableServersPanel))
+                                .addContainerGap())
+                        .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        mainPanelLayout.setVerticalGroup(
+                mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(availableServersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(typesLabel)
+                                        .addComponent(typeAssetsCheckBox)
+                                        .addComponent(typeMapsCheckBox))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(availableServersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(startButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(fastDLUrlTextField)
+                                        .addComponent(fastDLUrlLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
+                                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        // call onCancelPanel() when cross is clicked.
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                onCancelPanel();
+            }
+        });
 
         pack();
     }
@@ -204,7 +212,7 @@ public class SwingMainFrame extends JDialog {
         startButton.setEnabled(true);
     }
 
-    private static void onCancel() {
+    private static void onCancelPanel() {
         DownloadManager.deleteAllTempFiles();
         System.exit(0);
     }
@@ -219,12 +227,11 @@ public class SwingMainFrame extends JDialog {
         ex.setVisible(true);
     }
 
-    // Variables declaration - do not modify
-    private javax.swing.JList availableServersList;
+    // Java swing vars declaration.
+    private JList availableServersList;
     private JTextField fastDLUrlTextField;
     private JButton aboutButton;
     private JButton startButton;
     private JCheckBox typeMapsCheckBox;
     private JCheckBox typeAssetsCheckBox;
-    // End of variables declaration
 }

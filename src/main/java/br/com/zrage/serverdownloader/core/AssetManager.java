@@ -8,12 +8,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssetManager extends DownloadManager {
+    private final GameServer serverContext;
     private Path gameDirectoryPath;
 
     public AssetManager(GameServer server) {
         super();
+        this.serverContext = server;
 
         // Persiste o path da pasta do jogo.
         this.gameDirectoryPath = Paths.get(server.getGameDirectoryPath());
@@ -27,12 +31,12 @@ public class AssetManager extends DownloadManager {
         this.gameDirectoryPath = path;
     }
 
-    public boolean downloadAsset(GameAsset asset) {
+    public boolean download(GameAsset asset) {
         final Path tempFile = tempFolderPath.resolve(asset.getFileName());
         return this.download(asset.getRemoteFileName(), tempFile);
     }
 
-    public void decompressAsset(GameAsset asset) {
+    public void decompress(GameAsset asset) {
         final Path tempFile = tempFolderPath.resolve(asset.getFileName());
         final String targetTempFile = tempFolderPath.resolve(asset.getLocalFileName()).toString();
 
@@ -41,11 +45,6 @@ public class AssetManager extends DownloadManager {
         } catch (IOException err) {
             err.printStackTrace();
         }
-    }
-
-    public boolean assetExists(GameAsset asset) {
-        final Path targetFile = gameDirectoryPath.resolve(asset.getFilePath());
-        return Files.exists(targetFile);
     }
 
     public void moveToGameFolder(GameAsset asset) {
@@ -63,5 +62,18 @@ public class AssetManager extends DownloadManager {
         parentFile.mkdirs();
 
         this.moveFile(tempFile, targetFile);
+    }
+
+    public List<GameAsset> getAssetsToDownload(boolean replaceIfExists) {
+        final List<GameAsset> serverAssetsList = serverContext.getGameAssetsList();
+        List<GameAsset> assetsList = new ArrayList<>();
+
+        for (GameAsset asset : serverAssetsList) {
+            if (asset.existsInFolder(gameDirectoryPath) && !replaceIfExists) {
+                continue;
+            }
+            assetsList.add(asset);
+        }
+        return assetsList;
     }
 }

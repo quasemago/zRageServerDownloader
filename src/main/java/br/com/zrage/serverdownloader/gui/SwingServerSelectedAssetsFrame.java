@@ -8,7 +8,6 @@ import br.com.zrage.serverdownloader.core.utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.beans.PropertyChangeEvent;
@@ -20,44 +19,39 @@ import java.util.List;
 public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyChangeListener {
     private final GameServer serverContext;
     private final AssetManager assetManager;
-    private List<GameAsset> assetsToDownload;
     private TaskSwing task;
-    private boolean replaceExistingAssets;
 
-    class TaskSwing extends SwingWorker<Void, Void> {
-        /*
-         * Main task. Executed in background thread.
-         */
+    private class TaskSwing extends SwingWorker<Void, Void> {
         @Override
         public Void doInBackground() {
             int progress = 0;
             setProgress(0);
 
-            double selectedCount = assetsToDownload.size();
-            while (!assetsToDownload.isEmpty() && !isCancelled()) {
-                // Get first asset from list and remove.
-                GameAsset asset = assetsToDownload.remove(0);
+            List<GameAsset> assetsList = assetManager.getAssetsToDownload(replaceExistingAssetsCheckBox.isSelected());
 
-                // Skip asset if already exists, if enabled.
-                if (!replaceExistingAssets && assetManager.assetExists(asset)) {
-                    //DownloadManager.appendToLogger(asset.getFilePath() + " já existe, skipando!");
+            if (assetsList.isEmpty()) {
+                return null;
+            }
 
-                    // Update progress.
-                    progress++;
-                    setProgress((int) Math.round(((double) progress / selectedCount) * 100));
-                    continue;
+            DownloadManager.appendToSwingLogger("Fetched " + assetsList.size() + " pending assets to download from " + serverContext.getName() + " server!");
+
+            double selectedCount = assetsList.size();
+            for (GameAsset asset : assetsList) {
+                // Task swing canceled.
+                if (isCancelled()) {
+                    break;
                 }
 
                 // Download asset.
-                DownloadManager.appendToLogger("Downloading: " + asset.getFilePath());
-                if (!assetManager.downloadAsset(asset)) {
-                    DownloadManager.appendToLogger("*Error Downloading*: " + asset.getRemoteFileName());
+                DownloadManager.appendToSwingLogger("Downloading: " + asset.getFilePath());
+                if (!assetManager.download(asset)) {
+                    DownloadManager.appendToSwingLogger("*Error Downloading*: " + asset.getRemoteFileName());
                     continue;
                 }
 
                 // Decompress asset.
-                DownloadManager.appendToLogger("Extracting: " + asset.getFilePath());
-                assetManager.decompressAsset(asset);
+                DownloadManager.appendToSwingLogger("Extracting: " + asset.getFilePath());
+                assetManager.decompress(asset);
 
                 // Move to game directory.
                 assetManager.moveToGameFolder(asset);
@@ -69,100 +63,81 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             return null;
         }
 
-        /*
-         * Executed in event dispatching thread
-         */
         @Override
         public void done() {
+            // Disable/hide cancel button.
             cancelDownloadButton.setEnabled(false);
             cancelDownloadButton.setVisible(false);
+
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
-            Toolkit.getDefaultToolkit().beep();
+            // Enable download button again and others fields.
             downloadAssetsButton.setEnabled(true);
             downloadAssetsButton.setVisible(true);
             replaceExistingAssetsCheckBox.setEnabled(true);
-            fileChooseButton.setEnabled(true);
-            setCursor(null); //turn off the wait cursor
+            gameDirChooseButton.setEnabled(true);
 
-            // Reset download list.
-            assetsToDownload = serverContext.getGameAssetsList();
-            DownloadManager.appendToLogger("Download completed!");
+            // Download completed alert.
+            Toolkit.getDefaultToolkit().beep();
+            setCursor(null); //turn off the wait cursor
+            DownloadManager.appendToSwingLogger("Download completed!");
         }
     }
 
     public SwingServerSelectedAssetsFrame(Frame parent, boolean modal, GameServer server) {
         super(parent, modal);
+        utils.setSwingImageIcon(this);
+        this.setTitle("zRageServerDownloader: " + server.getName());
 
-        // Set server context.
         this.serverContext = server;
-
-        // Init map manager.
         this.assetManager = new AssetManager(serverContext);
 
+        // Init swing components.
         initComponents();
     }
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
-        utils.setSwingImageIcon(this);
-        this.setTitle("zRageServerDownloader: " + serverContext.getName());
-
-        // Init swing components.
+        /* Main panel. */
         JPanel mainPanel = new JPanel();
-        JLabel jLabel1 = new JLabel();
-        assetsDirTextField = new JTextField();
-        fileChooseButton = new JButton();
-        replaceExistingAssetsCheckBox = new JCheckBox();
-        downloadAssetsButton = new JButton();
-        cancelDownloadButton = new JButton();
-        JScrollPane jScrollPane1 = new JScrollPane();
-        JTextArea progressTextArea = new JTextArea();
-        progressBar = new JProgressBar();
+        mainPanel.setBackground(new java.awt.Color(209, 209, 209));
 
-        // Inicializa todos mapas selecionados de padrão.
-        // TODO: select maps to download.
-        assetsToDownload = serverContext.getGameAssetsList();
-
-        // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
+        // call onCancel() on ESCAPE.
         mainPanel.registerKeyboardAction(evt ->
-                onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+                onCancelPanel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainPanel.setBackground(new java.awt.Color(209, 209, 209)); // [209,209,209]
+        /* Game dir section. */
+        JLabel gameDirLabel = new JLabel();
+        gameDirLabel.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
+        gameDirLabel.setText("Game directory:");
 
-        jLabel1.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("Game directory:");
+        gameDirTextField = new JTextField();
+        gameDirTextField.setText(serverContext.getGameDirectoryPath());
 
-        assetsDirTextField.setText(serverContext.getGameDirectoryPath());
+        gameDirChooseButton = new JButton();
+        gameDirChooseButton.setText("...");
+        gameDirChooseButton.addActionListener(evt -> gameDirChooseButtonActionPerformed());
+        gameDirChooseButton.setBackground(new java.awt.Color(255, 255, 255));
 
-        fileChooseButton.setText("...");
-        fileChooseButton.addActionListener(evt -> fileChooseButtonActionPerformed());
-        fileChooseButton.setBackground(new java.awt.Color(255, 255, 255));
-
-        replaceExistingAssets = false;
+        /* Replace existing checkbox section. */
+        replaceExistingAssetsCheckBox = new JCheckBox();
         replaceExistingAssetsCheckBox.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
         replaceExistingAssetsCheckBox.setText("Replace any existing asset");
         replaceExistingAssetsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
-        replaceExistingAssetsCheckBox.addActionListener(evt -> replaceExistingAssets = replaceExistingAssetsCheckBox.isSelected());
 
+        /* Download/cancel buttons section */
+        downloadAssetsButton = new JButton();
         downloadAssetsButton.setFont(new Font("Segoe UI", 1, 13)); // NOI18N
         downloadAssetsButton.setText("Download Assets ");
         downloadAssetsButton.addActionListener(evt -> downloadAssetsButtonActionPerformed());
         downloadAssetsButton.setEnabled(true);
         downloadAssetsButton.setBackground(new java.awt.Color(255, 255, 255));
 
+        cancelDownloadButton = new JButton();
         cancelDownloadButton.setFont(new Font("Segoe UI", 1, 13)); // NOI18N
         cancelDownloadButton.setText("Cancel");
         cancelDownloadButton.addActionListener(evt -> {
@@ -175,15 +150,21 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         cancelDownloadButton.setBackground(new java.awt.Color(255, 255, 255));
         cancelDownloadButton.setVisible(false);
 
+        /* Download progress area section */
+        JTextArea progressTextArea = new JTextArea();
         progressTextArea.setEditable(false);
         progressTextArea.setColumns(20);
         progressTextArea.setRows(5);
-        jScrollPane1.setViewportView(progressTextArea);
-        DownloadManager.setLogTextArea(progressTextArea);
 
+        progressBar = new JProgressBar();
         progressBar.setForeground(new Color(0, 153, 0));
         progressBar.setValue(0);
 
+        JScrollPane progressTextPanel = new JScrollPane();
+        progressTextPanel.setViewportView(progressTextArea);
+        DownloadManager.setSwingLoggerTextArea(progressTextArea);
+
+        // Generated code by Netbeans form editor.
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -191,12 +172,12 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                         .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1)
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
+                                        .addComponent(progressTextPanel)
+                                        .addComponent(gameDirLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
                                         .addGroup(mainPanelLayout.createSequentialGroup()
-                                                .addComponent(assetsDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 607, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(gameDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 607, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(fileChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addComponent(gameDirChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addGroup(mainPanelLayout.createSequentialGroup()
                                                 .addComponent(replaceExistingAssetsCheckBox)
                                                 .addGap(296, 296, 296)
@@ -209,18 +190,18 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                 mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addGap(7, 7, 7)
-                                .addComponent(jLabel1)
+                                .addComponent(gameDirLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(assetsDirTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                                        .addComponent(fileChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(gameDirTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                                        .addComponent(gameDirChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(replaceExistingAssetsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
                                         .addComponent(downloadAssetsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(cancelDownloadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                                .addComponent(progressTextPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
@@ -237,10 +218,18 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
                         .addComponent(mainPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        // call onCancel() when cross is clicked.
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                onCancelPanel();
+            }
+        });
+
         pack();
     }
 
-    private void fileChooseButtonActionPerformed() {
+    private void gameDirChooseButtonActionPerformed() {
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.showOpenDialog(this);
@@ -251,21 +240,24 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         }
 
         if (file.exists()) {
-            String newAssetsDirPath = file.getPath();
-
-            assetsDirTextField.setText(newAssetsDirPath);
-            assetManager.setGameDirectoryPath(Paths.get(newAssetsDirPath));
+            final String newDirPath = file.getPath();
+            gameDirTextField.setText(newDirPath);
+            assetManager.setGameDirectoryPath(Paths.get(newDirPath));
         }
     }
 
     private void downloadAssetsButtonActionPerformed() {
+        // Disable/hide download button and others fields.
         downloadAssetsButton.setEnabled(false);
         downloadAssetsButton.setVisible(false);
         replaceExistingAssetsCheckBox.setEnabled(false);
-        fileChooseButton.setEnabled(false);
+        gameDirChooseButton.setEnabled(false);
+
+        // Enable/show cancel button.
         cancelDownloadButton.setEnabled(true);
         cancelDownloadButton.setVisible(true);
 
+        // Reset progressbar and set wait cursor.
         progressBar.setValue(0);
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -285,7 +277,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         }
     }
 
-    public void onCancel() {
+    public void onCancelPanel() {
         if (task != null) {
             task.cancel(true);
         }
@@ -299,12 +291,11 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         ex.setVisible(true);
     }
 
-    // Variables declaration - do not modify
-    private JButton fileChooseButton;
+    // Java swing vars declaration
+    private JButton gameDirChooseButton;
     private JButton downloadAssetsButton;
     private JButton cancelDownloadButton;
-    private JTextField assetsDirTextField;
+    private JTextField gameDirTextField;
     private JProgressBar progressBar;
     private JCheckBox replaceExistingAssetsCheckBox;
-    // End of variables declaration
 }
