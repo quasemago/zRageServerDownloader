@@ -1,4 +1,4 @@
-package br.com.zrage.serverdownloader.gui.utils;
+package br.com.zrage.serverdownloader.gui.swingutils;
 
 /**
  * License - LGPL

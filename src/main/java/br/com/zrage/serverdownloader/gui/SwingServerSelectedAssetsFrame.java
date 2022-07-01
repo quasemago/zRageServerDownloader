@@ -5,7 +5,7 @@ import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.models.GameAsset;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
-import br.com.zrage.serverdownloader.gui.utils.JSmartScroller;
+import br.com.zrage.serverdownloader.gui.swingutils.JSmartScroller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -81,6 +81,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             downloadAssetsButton.setVisible(true);
             replaceExistingAssetsCheckBox.setEnabled(true);
             gameDirChooseButton.setEnabled(true);
+            gameDirTextField.setEnabled(false);
 
             // Download completed alert.
             Toolkit.getDefaultToolkit().beep();
@@ -256,6 +257,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         downloadAssetsButton.setVisible(false);
         replaceExistingAssetsCheckBox.setEnabled(false);
         gameDirChooseButton.setEnabled(false);
+        gameDirTextField.setEnabled(false);
 
         // Enable/show cancel button.
         cancelDownloadButton.setEnabled(true);

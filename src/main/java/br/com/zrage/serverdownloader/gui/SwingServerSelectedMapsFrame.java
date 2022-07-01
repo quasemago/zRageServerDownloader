@@ -5,7 +5,7 @@ import br.com.zrage.serverdownloader.core.MapManager;
 import br.com.zrage.serverdownloader.core.models.GameMap;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
-import br.com.zrage.serverdownloader.gui.utils.JSmartScroller;
+import br.com.zrage.serverdownloader.gui.swingutils.JSmartScroller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,6 +83,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             downloadMapsButton.setVisible(true);
             replaceExistingMapsCheckBox.setEnabled(true);
             mapsDirChooseButton.setEnabled(true);
+            mapsDirTextField.setEnabled(true);
 
             // Download completed alert.
             Toolkit.getDefaultToolkit().beep();
@@ -124,6 +125,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         mapsDirChooseButton = new JButton();
         mapsDirChooseButton.setText("...");
         mapsDirChooseButton.setBackground(new java.awt.Color(255, 255, 255));
+        mapsDirChooseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         mapsDirChooseButton.addActionListener(evt -> mapsDirChooseButtonActionPerformed());
 
         /* Replace existing checkbox section. */
@@ -137,6 +139,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         downloadMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         downloadMapsButton.setText("Download Maps");
         downloadMapsButton.setBackground(new java.awt.Color(255, 255, 255));
+        downloadMapsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         downloadMapsButton.addActionListener(evt -> downloadMapsButtonActionPerformed());
         downloadMapsButton.setEnabled(true);
 
@@ -144,6 +147,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         cancelDownloadButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         cancelDownloadButton.setText("Cancel");
         cancelDownloadButton.setBackground(new java.awt.Color(255, 255, 255));
+        cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelDownloadButton.addActionListener(evt -> {
             if (task != null) {
                 task.cancel(true);
@@ -252,13 +256,18 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     }
 
     private void downloadMapsButtonActionPerformed() {
+        // Disable/hide download button and others fields.
         downloadMapsButton.setEnabled(false);
         downloadMapsButton.setVisible(false);
         replaceExistingMapsCheckBox.setEnabled(false);
         mapsDirChooseButton.setEnabled(false);
+        mapsDirTextField.setEnabled(false);
+
+        // Enable/show cancel button.
         cancelDownloadButton.setEnabled(true);
         cancelDownloadButton.setVisible(true);
 
+        // Reset progressbar and set wait cursor.
         progressBar.setValue(0);
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
