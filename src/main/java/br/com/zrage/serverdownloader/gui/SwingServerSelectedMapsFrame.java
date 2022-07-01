@@ -8,7 +8,6 @@ import br.com.zrage.serverdownloader.core.utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.beans.PropertyChangeEvent;
