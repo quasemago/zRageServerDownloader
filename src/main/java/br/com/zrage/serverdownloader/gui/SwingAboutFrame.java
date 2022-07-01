@@ -1,7 +1,7 @@
 package br.com.zrage.serverdownloader.gui;
 
 import br.com.zrage.serverdownloader.core.utils;
-import br.com.zrage.serverdownloader.gui.utils.JLinkLabel;
+import br.com.zrage.serverdownloader.gui.swingutils.JLinkLabel;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -62,9 +62,10 @@ public class SwingAboutFrame extends JDialog {
         appInfoTitleLabel.setText("App Information");
         appInfoTitleLabel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
 
+        // TODO: Remove hardcoded version value.
         JLabel versionLabel = new JLabel();
         versionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        versionLabel.setText("Version: 1.0.0");
+        versionLabel.setText("Version: 1.0.1");
 
         JLabel createdByLabel = new JLabel();
         createdByLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
