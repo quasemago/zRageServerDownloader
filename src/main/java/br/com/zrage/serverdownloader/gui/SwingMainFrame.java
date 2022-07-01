@@ -4,10 +4,12 @@ import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
 
@@ -16,7 +18,7 @@ public class SwingMainFrame extends JDialog {
 
     public SwingMainFrame(JFrame parent, boolean modal) {
         super(parent, modal);
-        utils.setSwingImageIcon(this);
+        this.setIconImage(utils.getResourceImageIcon("zrageplayer.png"));
         this.setTitle("zRageServerDownloader");
 
         // Init swing components.
@@ -36,7 +38,7 @@ public class SwingMainFrame extends JDialog {
         /* Available servers section. */
         JLabel availableServersLabel = new JLabel();
         availableServersLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        availableServersLabel.setText("Available Servers:");
+        availableServersLabel.setText("Select available servers:");
 
         List<GameServer> serverList = DownloadManager.getAvailableServersList().getServers();
         availableServersList = new JList<>(new Vector<>(serverList));
@@ -78,7 +80,7 @@ public class SwingMainFrame extends JDialog {
 
         typeAssetsCheckBox = new JCheckBox();
         typeAssetsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        typeAssetsCheckBox.setText("Assets");
+        typeAssetsCheckBox.setText("Skins/Sounds");
         typeAssetsCheckBox.setFocusable(false);
         typeAssetsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
         typeAssetsCheckBox.addActionListener(evt -> {
@@ -103,6 +105,7 @@ public class SwingMainFrame extends JDialog {
         startButton.setText("START");
         startButton.setEnabled(false);
         startButton.setBackground(new java.awt.Color(255, 255, 255));
+        startButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         startButton.addActionListener(evt -> startButtonActionPerformed());
 
         /* Head toolbar buttons section. */
@@ -110,20 +113,17 @@ public class SwingMainFrame extends JDialog {
         jToolBar1.setRollover(false);
         jToolBar1.setFloatable(false);
 
-        aboutButton = new JButton();
+        JButton aboutButton = new JButton();
         aboutButton.setText("About");
         aboutButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         aboutButton.setBackground(new java.awt.Color(255, 255, 255));
         aboutButton.setFocusable(false);
         aboutButton.setBorderPainted(false);
         aboutButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        aboutButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         aboutButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aboutButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        aboutButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                System.out.println("BLAH");
-            }
-        });
+        aboutButton.addActionListener(evt -> aboutButtonActionPerformed());
 
         jToolBar1.add(aboutButton);
 
@@ -205,6 +205,14 @@ public class SwingMainFrame extends JDialog {
         }
     }
 
+    private void aboutButtonActionPerformed() {
+        try {
+            SwingAboutFrame.StartSwingAboutFrame();
+        } catch (URISyntaxException err) {
+            err.printStackTrace();
+        }
+    }
+
     private void availableServersListValueChanged(GameServer server) {
         serverContext = server;
         fastDLUrlTextField.setText(serverContext.getFastDLUrl());
@@ -229,7 +237,6 @@ public class SwingMainFrame extends JDialog {
     // Java swing vars declaration.
     private JList availableServersList;
     private JTextField fastDLUrlTextField;
-    private JButton aboutButton;
     private JButton startButton;
     private JCheckBox typeMapsCheckBox;
     private JCheckBox typeAssetsCheckBox;

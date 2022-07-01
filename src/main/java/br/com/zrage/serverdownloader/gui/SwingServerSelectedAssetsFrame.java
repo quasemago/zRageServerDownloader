@@ -5,6 +5,7 @@ import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.models.GameAsset;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
+import br.com.zrage.serverdownloader.gui.utils.JSmartScroller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,7 +91,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
 
     public SwingServerSelectedAssetsFrame(Frame parent, boolean modal, GameServer server) {
         super(parent, modal);
-        utils.setSwingImageIcon(this);
+        this.setIconImage(utils.getResourceImageIcon("zrageplayer.png"));
         this.setTitle("zRageServerDownloader: " + server.getName());
 
         this.serverContext = server;
@@ -122,6 +123,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         gameDirChooseButton.setText("...");
         gameDirChooseButton.addActionListener(evt -> gameDirChooseButtonActionPerformed());
         gameDirChooseButton.setBackground(new java.awt.Color(255, 255, 255));
+        gameDirChooseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         /* Replace existing checkbox section. */
         replaceExistingAssetsCheckBox = new JCheckBox();
@@ -136,6 +138,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         downloadAssetsButton.addActionListener(evt -> downloadAssetsButtonActionPerformed());
         downloadAssetsButton.setEnabled(true);
         downloadAssetsButton.setBackground(new java.awt.Color(255, 255, 255));
+        downloadAssetsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         cancelDownloadButton = new JButton();
         cancelDownloadButton.setFont(new Font("Segoe UI", 1, 13)); // NOI18N
@@ -148,13 +151,13 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         });
         cancelDownloadButton.setEnabled(false);
         cancelDownloadButton.setBackground(new java.awt.Color(255, 255, 255));
+        cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelDownloadButton.setVisible(false);
 
         /* Download progress area section */
         JTextArea progressTextArea = new JTextArea();
         progressTextArea.setEditable(false);
         progressTextArea.setColumns(20);
-        progressTextArea.setRows(5);
 
         progressBar = new JProgressBar();
         progressBar.setForeground(new Color(0, 153, 0));
@@ -162,6 +165,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
 
         JScrollPane progressTextPanel = new JScrollPane();
         progressTextPanel.setViewportView(progressTextArea);
+        new JSmartScroller(progressTextPanel);
         DownloadManager.setSwingLoggerTextArea(progressTextArea);
 
         // Generated code by Netbeans form editor.

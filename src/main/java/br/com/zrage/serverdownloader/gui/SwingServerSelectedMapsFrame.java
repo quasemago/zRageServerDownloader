@@ -5,6 +5,7 @@ import br.com.zrage.serverdownloader.core.MapManager;
 import br.com.zrage.serverdownloader.core.models.GameMap;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
+import br.com.zrage.serverdownloader.gui.utils.JSmartScroller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -92,7 +93,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
     public SwingServerSelectedMapsFrame(java.awt.Frame parent, boolean modal, GameServer server) {
         super(parent, modal);
-        utils.setSwingImageIcon(this);
+        this.setIconImage(utils.getResourceImageIcon("zrageplayer.png"));
         this.setTitle("zRageServerDownloader: " + server.getName());
 
         this.serverContext = server;
@@ -164,6 +165,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
         JScrollPane progressTextPanel = new JScrollPane();
         progressTextPanel.setViewportView(progressTextArea);
+        new JSmartScroller(progressTextPanel);
         DownloadManager.setSwingLoggerTextArea(progressTextArea);
 
         // Generated code by Netbeans form editor.
