@@ -47,7 +47,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                 return null;
             }
 
-            DownloadManager.appendToSwingLogger("Fetched " + mapList.size() + " pending maps to download from " + serverContext.getName() + " server!");
+            DownloadManager.appendToSwingLogger("Fetched " + mapList.size() + " pending maps to download from \"" + serverContext.getName() + "\" server!");
 
             int progress = 0;
             double selectedCount = mapList.size();
