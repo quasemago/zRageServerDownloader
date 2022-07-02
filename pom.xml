@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>br.com.zrage</groupId>
-    <artifactId>serverdownloader</artifactId>
+    <artifactId>zRageServerDownloader</artifactId>
     <version>1.0.2</version>
     <name>zRageServerDownloader</name>
     <description>Downloader for ZRage server assets</description>
