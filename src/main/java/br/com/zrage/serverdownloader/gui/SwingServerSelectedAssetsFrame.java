@@ -308,8 +308,8 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
     }
 
     // Start swing selected server frame.
-    public static void StartSwingServerFrame(GameServer server) {
-        SwingServerSelectedAssetsFrame ex = new SwingServerSelectedAssetsFrame(new JFrame(), true, server);
+    public static void StartSwingServerFrame(SwingMainFrame frameInstance, GameServer server) {
+        SwingServerSelectedAssetsFrame ex = new SwingServerSelectedAssetsFrame(frameInstance, true, server);
         ex.setLocationRelativeTo(null);
         ex.setVisible(true);
     }

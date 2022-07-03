@@ -14,11 +14,12 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
 
-public class SwingMainFrame extends JDialog {
+public class SwingMainFrame extends JFrame {
+    private static SwingMainFrame frameInstance;
     private GameServer serverContext;
 
-    public SwingMainFrame(JFrame parent, boolean modal) {
-        super(parent, modal);
+    public SwingMainFrame() {
+        super();
         this.setIconImage(utils.getResourceImageIcon("zrageplayer.png"));
         this.setTitle("zRageServerDownloader");
 
@@ -112,10 +113,10 @@ public class SwingMainFrame extends JDialog {
         startButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         startButton.addActionListener(evt -> {
             if (typeAssetsCheckBox.isSelected()) {
-                SwingServerSelectedAssetsFrame.StartSwingServerFrame(serverContext);
+                SwingServerSelectedAssetsFrame.StartSwingServerFrame(frameInstance, serverContext);
             } else {
                 // Maps is default value.
-                SwingServerSelectedMapsFrame.StartSwingServerFrame(serverContext);
+                SwingServerSelectedMapsFrame.StartSwingServerFrame(frameInstance, serverContext);
             }
         });
 
@@ -128,7 +129,7 @@ public class SwingMainFrame extends JDialog {
         initToolBarButton(aboutButton, "About");
         aboutButton.addActionListener(evt -> {
             try {
-                SwingAboutFrame.StartSwingAboutFrame();
+                SwingAboutFrame.StartSwingAboutFrame(frameInstance);
             } catch (URISyntaxException err) {
                 err.printStackTrace();
             }
@@ -243,9 +244,9 @@ public class SwingMainFrame extends JDialog {
             err.printStackTrace();
         }
 
-        SwingMainFrame ex = new SwingMainFrame(new javax.swing.JFrame(), true);
-        ex.setLocationRelativeTo(null);
-        ex.setVisible(true);
+        frameInstance = new SwingMainFrame();
+        frameInstance.setLocationRelativeTo(null);
+        frameInstance.setVisible(true);
     }
 
     // Java swing vars declaration.
