@@ -48,6 +48,8 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             // Get available maps to download.
             List<GameMap> mapList = mapManager.getMapsToDownload(replaceExistingMapsCheckBox.isSelected());
             if (mapList.isEmpty()) {
+                // Update progress bar.
+                setProgress(100);
                 return null;
             }
 
