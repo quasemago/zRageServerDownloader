@@ -48,6 +48,8 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             // Get available assets to download.
             List<GameAsset> assetsList = assetManager.getAssetsToDownload(replaceExistingAssetsCheckBox.isSelected());
             if (assetsList.isEmpty()) {
+                // Update progress bar.
+                setProgress(100);
                 return null;
             }
 
@@ -131,7 +133,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
     private void initComponents() {
         /* Main panel. */
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(new java.awt.Color(209, 209, 209));
+        mainPanel.setBackground(new java.awt.Color(225, 225, 225));
 
         // call onCancel() on ESCAPE.
         mainPanel.registerKeyboardAction(evt ->
@@ -148,14 +150,13 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         gameDirChooseButton = new JButton();
         gameDirChooseButton.setText("...");
         gameDirChooseButton.addActionListener(evt -> gameDirChooseButtonActionPerformed());
-        gameDirChooseButton.setBackground(new java.awt.Color(255, 255, 255));
         gameDirChooseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         /* Replace existing checkbox section. */
         replaceExistingAssetsCheckBox = new JCheckBox();
         replaceExistingAssetsCheckBox.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
         replaceExistingAssetsCheckBox.setText("Replace any existing asset");
-        replaceExistingAssetsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
+        replaceExistingAssetsCheckBox.setBackground(new java.awt.Color(225, 225, 225));
 
         /* Download/cancel buttons section */
         downloadAssetsButton = new JButton();
@@ -163,7 +164,6 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         downloadAssetsButton.setText("Download Assets ");
         downloadAssetsButton.addActionListener(evt -> downloadAssetsButtonActionPerformed());
         downloadAssetsButton.setEnabled(true);
-        downloadAssetsButton.setBackground(new java.awt.Color(255, 255, 255));
         downloadAssetsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         cancelDownloadButton = new JButton();
@@ -172,10 +172,9 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         cancelDownloadButton.addActionListener(evt -> {
             cancelDownloadButton.setEnabled(false);
             downloadCanceled = true;
-            DownloadManager.appendToSwingLogger("Canceling download...");
+            DownloadManager.appendToSwingLogger("Canceling download. Waiting for end of the current process...");
         });
         cancelDownloadButton.setEnabled(false);
-        cancelDownloadButton.setBackground(new java.awt.Color(255, 255, 255));
         cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelDownloadButton.setVisible(false);
 

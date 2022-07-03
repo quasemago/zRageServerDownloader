@@ -48,6 +48,8 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             // Get available maps to download.
             List<GameMap> mapList = mapManager.getMapsToDownload(replaceExistingMapsCheckBox.isSelected());
             if (mapList.isEmpty()) {
+                // Update progress bar.
+                setProgress(100);
                 return null;
             }
 
@@ -133,7 +135,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     private void initComponents() {
         /* Main panel. */
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(new java.awt.Color(209, 209, 209));
+        mainPanel.setBackground(new java.awt.Color(225, 225, 225));
 
         // call onCancel() on ESCAPE.
         mainPanel.registerKeyboardAction(evt ->
@@ -149,7 +151,6 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
         mapsDirChooseButton = new JButton();
         mapsDirChooseButton.setText("...");
-        mapsDirChooseButton.setBackground(new java.awt.Color(255, 255, 255));
         mapsDirChooseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         mapsDirChooseButton.addActionListener(evt -> mapsDirChooseButtonActionPerformed());
 
@@ -157,13 +158,12 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         replaceExistingMapsCheckBox = new JCheckBox();
         replaceExistingMapsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         replaceExistingMapsCheckBox.setText("Replace any existing maps");
-        replaceExistingMapsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
+        replaceExistingMapsCheckBox.setBackground(new java.awt.Color(225, 225, 225));
 
         /* Download/cancel buttons section */
         downloadMapsButton = new JButton();
         downloadMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         downloadMapsButton.setText("Download Maps");
-        downloadMapsButton.setBackground(new java.awt.Color(255, 255, 255));
         downloadMapsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         downloadMapsButton.addActionListener(evt -> downloadMapsButtonActionPerformed());
         downloadMapsButton.setEnabled(true);
@@ -171,12 +171,11 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         cancelDownloadButton = new JButton();
         cancelDownloadButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         cancelDownloadButton.setText("Cancel Download");
-        cancelDownloadButton.setBackground(new java.awt.Color(255, 255, 255));
         cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelDownloadButton.addActionListener(evt -> {
             cancelDownloadButton.setEnabled(false);
             downloadCanceled = true;
-            DownloadManager.appendToSwingLogger("Canceling download...");
+            DownloadManager.appendToSwingLogger("Canceling download. Waiting for end of the current process...");
         });
         cancelDownloadButton.setEnabled(false);
         cancelDownloadButton.setVisible(false);

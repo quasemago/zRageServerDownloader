@@ -3,11 +3,13 @@ package br.com.zrage.serverdownloader.gui;
 import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
@@ -28,7 +30,7 @@ public class SwingMainFrame extends JDialog {
     private void initComponents() {
         /* Main panel. */
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(new java.awt.Color(209, 209, 209));
+        mainPanel.setBackground(new java.awt.Color(225, 225, 225));
 
         // call onCancelPanel() on ESCAPE.
         mainPanel.registerKeyboardAction(evt ->
@@ -43,7 +45,11 @@ public class SwingMainFrame extends JDialog {
         availableServersList = new JList<>(new Vector<>(serverList));
         availableServersList.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         availableServersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        availableServersList.addListSelectionListener(evt -> availableServersListValueChanged((GameServer) availableServersList.getSelectedValue()));
+        availableServersList.addListSelectionListener(evt -> {
+            serverContext = (GameServer) availableServersList.getSelectedValue();
+            fastDLUrlTextField.setText(serverContext.getFastDLUrl());
+            startButton.setEnabled(true);
+        });
 
         // Snipped from: https://stackoverflow.com/questions/12478661/
         availableServersList.setCellRenderer(new DefaultListCellRenderer() {
@@ -70,7 +76,7 @@ public class SwingMainFrame extends JDialog {
         typeMapsCheckBox.setText("Maps");
         typeMapsCheckBox.setSelected(true);
         typeMapsCheckBox.setFocusable(false);
-        typeMapsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
+        typeMapsCheckBox.setBackground(new java.awt.Color(225, 225, 225));
         typeMapsCheckBox.addActionListener(evt -> {
             if (typeMapsCheckBox.isSelected()) {
                 typeAssetsCheckBox.setSelected(false);
@@ -81,7 +87,7 @@ public class SwingMainFrame extends JDialog {
         typeAssetsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         typeAssetsCheckBox.setText("Skins/Sounds");
         typeAssetsCheckBox.setFocusable(false);
-        typeAssetsCheckBox.setBackground(new java.awt.Color(209, 209, 209));
+        typeAssetsCheckBox.setBackground(new java.awt.Color(225, 225, 225));
         typeAssetsCheckBox.addActionListener(evt -> {
             if (typeAssetsCheckBox.isSelected()) {
                 typeMapsCheckBox.setSelected(false);
@@ -97,15 +103,21 @@ public class SwingMainFrame extends JDialog {
 
         fastDLUrlTextField = new JTextField();
         fastDLUrlTextField.setEditable(false);
-        fastDLUrlTextField.setBackground(new java.awt.Color(240, 240, 240));
         fastDLUrlTextField.setText("");
 
         startButton = new JButton();
         startButton.setText("START");
         startButton.setEnabled(false);
-        startButton.setBackground(new java.awt.Color(255, 255, 255));
+        startButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         startButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        startButton.addActionListener(evt -> startButtonActionPerformed());
+        startButton.addActionListener(evt -> {
+            if (typeAssetsCheckBox.isSelected()) {
+                SwingServerSelectedAssetsFrame.StartSwingServerFrame(serverContext);
+            } else {
+                // Maps is default value.
+                SwingServerSelectedMapsFrame.StartSwingServerFrame(serverContext);
+            }
+        });
 
         /* Head toolbar buttons section. */
         JToolBar jToolBar1 = new JToolBar();
@@ -113,18 +125,26 @@ public class SwingMainFrame extends JDialog {
         jToolBar1.setFloatable(false);
 
         JButton aboutButton = new JButton();
-        aboutButton.setText("About");
-        aboutButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        aboutButton.setBackground(new java.awt.Color(255, 255, 255));
-        aboutButton.setFocusable(false);
-        aboutButton.setBorderPainted(false);
-        aboutButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        aboutButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        aboutButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        aboutButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        aboutButton.addActionListener(evt -> aboutButtonActionPerformed());
-
+        initToolBarButton(aboutButton, "About");
+        aboutButton.addActionListener(evt -> {
+            try {
+                SwingAboutFrame.StartSwingAboutFrame();
+            } catch (URISyntaxException err) {
+                err.printStackTrace();
+            }
+        });
         jToolBar1.add(aboutButton);
+
+        JButton helpButton = new JButton();
+        initToolBarButton(helpButton, "Help");
+        helpButton.addActionListener(evt -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://zrage.com.br"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        jToolBar1.add(helpButton);
 
         // Generated code by Netbeans form editor.
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
@@ -195,27 +215,16 @@ public class SwingMainFrame extends JDialog {
         pack();
     }
 
-    private void startButtonActionPerformed() {
-        if (typeAssetsCheckBox.isSelected()) {
-            SwingServerSelectedAssetsFrame.StartSwingServerFrame(serverContext);
-        } else {
-            // Maps is default value.
-            SwingServerSelectedMapsFrame.StartSwingServerFrame(serverContext);
-        }
-    }
-
-    private void aboutButtonActionPerformed() {
-        try {
-            SwingAboutFrame.StartSwingAboutFrame();
-        } catch (URISyntaxException err) {
-            err.printStackTrace();
-        }
-    }
-
-    private void availableServersListValueChanged(GameServer server) {
-        serverContext = server;
-        fastDLUrlTextField.setText(serverContext.getFastDLUrl());
-        startButton.setEnabled(true);
+    private void initToolBarButton(JButton button, String text) {
+        button.setText(text);
+        button.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        //aboutButton.setBackground(new java.awt.Color(225, 225, 225));
+        button.setFocusable(false);
+        //aboutButton.setBorderPainted(false);
+        //aboutButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        button.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     }
 
     private static void onCancelPanel() {
@@ -227,6 +236,12 @@ public class SwingMainFrame extends JDialog {
     public static void StartSwingMainFrame() {
         // Make sure delete main temp folder.
         DownloadManager.deleteAllTempFiles();
+
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
 
         SwingMainFrame ex = new SwingMainFrame(new javax.swing.JFrame(), true);
         ex.setLocationRelativeTo(null);

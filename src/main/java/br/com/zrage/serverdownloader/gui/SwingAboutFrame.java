@@ -21,12 +21,12 @@ public class SwingAboutFrame extends JDialog {
     private void initComponents() throws URISyntaxException {
         /* About panel. */
         JPanel aboutPanel = new JPanel();
-        aboutPanel.setBackground(new java.awt.Color(209, 209, 209));
+        aboutPanel.setBackground(new java.awt.Color(225, 225, 225));
 
         /* ZRage Logo section. */
         JLabel zRageIconLabel = new JLabel();
         zRageIconLabel.setIcon(new ImageIcon(utils.getResourceImageIcon("zragelogo.png"))); // NOI18N
-        zRageIconLabel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 3, new java.awt.Color(255, 255, 255)));
+        zRageIconLabel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 0, 2, new java.awt.Color(200, 200, 200)));
 
         /* Information section. */
         JLabel infoTitleLabel = new JLabel();
@@ -65,7 +65,7 @@ public class SwingAboutFrame extends JDialog {
         // TODO: Remove hardcoded version value.
         JLabel versionLabel = new JLabel();
         versionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        versionLabel.setText("Version: 1.0.4");
+        versionLabel.setText("Version: 1.0.5");
 
         JLabel createdByLabel = new JLabel();
         createdByLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -174,7 +174,7 @@ public class SwingAboutFrame extends JDialog {
         jLinkLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLinkLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLinkLabel.setBorder(null);
-        jLinkLabel.setBackground(new java.awt.Color(209, 209, 209));
+        jLinkLabel.setBackground(new java.awt.Color(225, 225, 225));
     }
 
     private void onCancelPanel() {
