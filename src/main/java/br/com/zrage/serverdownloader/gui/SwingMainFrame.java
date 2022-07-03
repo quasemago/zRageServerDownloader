@@ -3,6 +3,7 @@ package br.com.zrage.serverdownloader.gui;
 import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class SwingMainFrame extends JDialog {
     private void initComponents() {
         /* Main panel. */
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(new java.awt.Color(245, 245, 245));
+        mainPanel.setBackground(new java.awt.Color(225, 225, 225));
 
         // call onCancelPanel() on ESCAPE.
         mainPanel.registerKeyboardAction(evt ->
@@ -75,7 +76,7 @@ public class SwingMainFrame extends JDialog {
         typeMapsCheckBox.setText("Maps");
         typeMapsCheckBox.setSelected(true);
         typeMapsCheckBox.setFocusable(false);
-        typeMapsCheckBox.setBackground(new java.awt.Color(245, 245, 245));
+        typeMapsCheckBox.setBackground(new java.awt.Color(225, 225, 225));
         typeMapsCheckBox.addActionListener(evt -> {
             if (typeMapsCheckBox.isSelected()) {
                 typeAssetsCheckBox.setSelected(false);
@@ -86,7 +87,7 @@ public class SwingMainFrame extends JDialog {
         typeAssetsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         typeAssetsCheckBox.setText("Skins/Sounds");
         typeAssetsCheckBox.setFocusable(false);
-        typeAssetsCheckBox.setBackground(new java.awt.Color(245, 245, 245));
+        typeAssetsCheckBox.setBackground(new java.awt.Color(225, 225, 225));
         typeAssetsCheckBox.addActionListener(evt -> {
             if (typeAssetsCheckBox.isSelected()) {
                 typeMapsCheckBox.setSelected(false);
@@ -102,14 +103,12 @@ public class SwingMainFrame extends JDialog {
 
         fastDLUrlTextField = new JTextField();
         fastDLUrlTextField.setEditable(false);
-        fastDLUrlTextField.setBackground(new java.awt.Color(250, 250, 250));
         fastDLUrlTextField.setText("");
 
         startButton = new JButton();
         startButton.setText("START");
         startButton.setEnabled(false);
-        startButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        startButton.setBackground(new java.awt.Color(225, 225, 225));
+        startButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         startButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         startButton.addActionListener(evt -> {
             if (typeAssetsCheckBox.isSelected()) {
@@ -219,7 +218,7 @@ public class SwingMainFrame extends JDialog {
     private void initToolBarButton(JButton button, String text) {
         button.setText(text);
         button.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        //aboutButton.setBackground(new java.awt.Color(245, 245, 245));
+        //aboutButton.setBackground(new java.awt.Color(225, 225, 225));
         button.setFocusable(false);
         //aboutButton.setBorderPainted(false);
         //aboutButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -237,6 +236,12 @@ public class SwingMainFrame extends JDialog {
     public static void StartSwingMainFrame() {
         // Make sure delete main temp folder.
         DownloadManager.deleteAllTempFiles();
+
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
 
         SwingMainFrame ex = new SwingMainFrame(new javax.swing.JFrame(), true);
         ex.setLocationRelativeTo(null);

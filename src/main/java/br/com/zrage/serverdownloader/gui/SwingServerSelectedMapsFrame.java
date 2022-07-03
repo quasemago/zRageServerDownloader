@@ -135,7 +135,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     private void initComponents() {
         /* Main panel. */
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(new java.awt.Color(245, 245, 245));
+        mainPanel.setBackground(new java.awt.Color(225, 225, 225));
 
         // call onCancel() on ESCAPE.
         mainPanel.registerKeyboardAction(evt ->
@@ -151,7 +151,6 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
         mapsDirChooseButton = new JButton();
         mapsDirChooseButton.setText("...");
-        mapsDirChooseButton.setBackground(new java.awt.Color(225, 225, 225));
         mapsDirChooseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         mapsDirChooseButton.addActionListener(evt -> mapsDirChooseButtonActionPerformed());
 
@@ -159,13 +158,12 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         replaceExistingMapsCheckBox = new JCheckBox();
         replaceExistingMapsCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         replaceExistingMapsCheckBox.setText("Replace any existing maps");
-        replaceExistingMapsCheckBox.setBackground(new java.awt.Color(245, 245, 245));
+        replaceExistingMapsCheckBox.setBackground(new java.awt.Color(225, 225, 225));
 
         /* Download/cancel buttons section */
         downloadMapsButton = new JButton();
         downloadMapsButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         downloadMapsButton.setText("Download Maps");
-        downloadMapsButton.setBackground(new java.awt.Color(225, 225, 225));
         downloadMapsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         downloadMapsButton.addActionListener(evt -> downloadMapsButtonActionPerformed());
         downloadMapsButton.setEnabled(true);
@@ -173,7 +171,6 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         cancelDownloadButton = new JButton();
         cancelDownloadButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         cancelDownloadButton.setText("Cancel Download");
-        cancelDownloadButton.setBackground(new java.awt.Color(225, 225, 225));
         cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelDownloadButton.addActionListener(evt -> {
             cancelDownloadButton.setEnabled(false);

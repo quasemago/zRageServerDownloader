@@ -21,7 +21,7 @@ public class SwingAboutFrame extends JDialog {
     private void initComponents() throws URISyntaxException {
         /* About panel. */
         JPanel aboutPanel = new JPanel();
-        aboutPanel.setBackground(new java.awt.Color(245, 245, 245));
+        aboutPanel.setBackground(new java.awt.Color(225, 225, 225));
 
         /* ZRage Logo section. */
         JLabel zRageIconLabel = new JLabel();
@@ -174,7 +174,7 @@ public class SwingAboutFrame extends JDialog {
         jLinkLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLinkLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLinkLabel.setBorder(null);
-        jLinkLabel.setBackground(new java.awt.Color(245, 245, 245));
+        jLinkLabel.setBackground(new java.awt.Color(225, 225, 225));
     }
 
     private void onCancelPanel() {
