@@ -182,8 +182,8 @@ public class SwingAboutFrame extends JDialog {
     }
 
     // Start swing about frame.
-    public static void StartSwingAboutFrame() throws URISyntaxException {
-        SwingAboutFrame ex = new SwingAboutFrame(new JFrame(), true);
+    public static void StartSwingAboutFrame(SwingMainFrame frameInstance) throws URISyntaxException {
+        SwingAboutFrame ex = new SwingAboutFrame(frameInstance, true);
         ex.setLocationRelativeTo(null);
         ex.setVisible(true);
     }

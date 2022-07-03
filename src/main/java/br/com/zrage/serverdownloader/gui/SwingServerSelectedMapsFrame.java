@@ -311,8 +311,8 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     }
 
     // Start swing selected server frame.
-    public static void StartSwingServerFrame(GameServer server) {
-        SwingServerSelectedMapsFrame ex = new SwingServerSelectedMapsFrame(new javax.swing.JFrame(), true, server);
+    public static void StartSwingServerFrame(SwingMainFrame frameInstance, GameServer server) {
+        SwingServerSelectedMapsFrame ex = new SwingServerSelectedMapsFrame(frameInstance, true, server);
         ex.setLocationRelativeTo(null);
         ex.setVisible(true);
     }
