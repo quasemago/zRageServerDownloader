@@ -24,17 +24,21 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
     private final MapManager mapManager;
     private TaskSwing task;
     private boolean downloadFailed;
+    private boolean downloadCanceled;
 
     private class TaskSwing extends SwingWorker<Void, Void> {
         @Override
         public Void doInBackground() {
+            // Download starting.
             setProgress(0);
+
             downloadFailed = false;
+            downloadCanceled = false;
 
             // Get selected game dir and validate if exists.
             Path gameDirPath = Paths.get(mapsDirTextField.getText());
             if (!Files.exists(gameDirPath)) {
-                DownloadManager.appendToSwingLogger("*ERROR*: Selected game maps directory not found!");
+                DownloadManager.appendToSwingLogger("*Error*: Selected game maps directory not found!");
                 downloadFailed = true;
                 return null;
             }
@@ -54,7 +58,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
             for (GameMap map : mapList) {
                 // Task swing canceled.
-                if (isCancelled()) {
+                if (isCancelled() || downloadCanceled) {
                     break;
                 }
 
@@ -103,7 +107,13 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             // Download completed alert.
             Toolkit.getDefaultToolkit().beep();
             setCursor(null); //turn off the wait cursor
-            DownloadManager.appendToSwingLogger(downloadFailed ? "Download failed!" : "Download completed!");
+
+            if (downloadCanceled) {
+                progressBar.setValue(0);
+                DownloadManager.appendToSwingLogger("Download canceled!");
+            } else {
+                DownloadManager.appendToSwingLogger(downloadFailed ? "Download failed!" : "Download completed!");
+            }
         }
     }
 
@@ -160,14 +170,13 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
 
         cancelDownloadButton = new JButton();
         cancelDownloadButton.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        cancelDownloadButton.setText("Cancel");
+        cancelDownloadButton.setText("Cancel Download");
         cancelDownloadButton.setBackground(new java.awt.Color(255, 255, 255));
         cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelDownloadButton.addActionListener(evt -> {
-            if (task != null) {
-                task.cancel(true);
-            }
-            progressBar.setValue(0);
+            cancelDownloadButton.setEnabled(false);
+            downloadCanceled = true;
+            DownloadManager.appendToSwingLogger("Canceling download...");
         });
         cancelDownloadButton.setEnabled(false);
         cancelDownloadButton.setVisible(false);
