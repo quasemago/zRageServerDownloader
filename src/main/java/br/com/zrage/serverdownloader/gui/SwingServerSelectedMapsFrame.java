@@ -1,7 +1,6 @@
 package br.com.zrage.serverdownloader.gui;
 
 import br.com.zrage.serverdownloader.core.DownloadManager;
-import br.com.zrage.serverdownloader.core.MapManager;
 import br.com.zrage.serverdownloader.core.models.GameMap;
 import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.utils;
@@ -21,10 +20,8 @@ import java.util.List;
 
 public class SwingServerSelectedMapsFrame extends JDialog implements PropertyChangeListener {
     private final GameServer serverContext;
-    private final MapManager mapManager;
+    private final DownloadManager downloadManager;
     private TaskSwing task;
-    private boolean downloadFailed;
-    private boolean downloadCanceled;
 
     private class TaskSwing extends SwingWorker<Void, Void> {
         @Override
@@ -32,53 +29,55 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             // Download starting.
             setProgress(0);
 
-            downloadFailed = false;
-            downloadCanceled = false;
+            downloadManager.setDownloadFailed(false);
+            downloadManager.setDownloadCanceled(false);
 
             // Get selected game dir and validate if exists.
-            Path gameDirPath = Paths.get(mapsDirTextField.getText());
-            if (!Files.exists(gameDirPath)) {
-                DownloadManager.appendToSwingLogger("*Error*: Selected game maps directory not found!");
-                downloadFailed = true;
+            Path mapsDirPath = Paths.get(mapsDirTextField.getText());
+            if (!Files.exists(mapsDirPath)) {
+                downloadManager.appendToSwingLogger("*Error*: Selected game maps directory not found!");
+                downloadManager.setDownloadFailed(true);
                 return null;
             }
 
-            mapManager.setMapsDirectoryPath(gameDirPath);
+            downloadManager.setMapsDirectoryPath(mapsDirPath);
 
             // Get available maps to download.
-            List<GameMap> mapList = mapManager.getMapsToDownload(replaceExistingMapsCheckBox.isSelected());
+            downloadManager.appendToSwingLogger("Fetching pending maps to download from \"" + serverContext.getName() + "\" server!");
+
+            List<GameMap> mapList = downloadManager.getMapsToDownload(replaceExistingMapsCheckBox.isSelected());
             if (mapList.isEmpty()) {
                 // Update progress bar.
                 setProgress(100);
                 return null;
             }
 
-            DownloadManager.appendToSwingLogger("Fetched " + mapList.size() + " pending maps to download from \"" + serverContext.getName() + "\" server!");
+            downloadManager.appendToSwingLogger("Fetched " + mapList.size() + " pending maps to download from \"" + serverContext.getName() + "\" server!");
 
             int progress = 0;
             double selectedCount = mapList.size();
 
             for (GameMap map : mapList) {
                 // Task swing canceled.
-                if (isCancelled() || downloadCanceled) {
+                if (isCancelled() || downloadManager.isDownloadCanceled()) {
                     break;
                 }
 
                 // Download map.
-                DownloadManager.appendToSwingLogger("Downloading map: " + map.getName());
-                if (!mapManager.download(map)) {
-                    DownloadManager.appendToSwingLogger("*Error Downloading*: " + map.getRemoteFileName());
+                downloadManager.appendToSwingLogger("Downloading map: " + map.getName());
+                if (!downloadManager.download(map)) {
+                    downloadManager.appendToSwingLogger("*Error Downloading*: " + map.getRemoteFileName());
                     continue;
                 }
 
                 // Decompress map.
                 if (map.isCompressed()) {
-                    DownloadManager.appendToSwingLogger("Extracting map: " + map.getName());
-                    mapManager.decompress(map);
+                    downloadManager.appendToSwingLogger("Extracting map: " + map.getName());
+                    downloadManager.decompress(map);
                 }
 
                 // Move to maps directory.
-                mapManager.moveToMapsFolder(map);
+                downloadManager.moveToGameFolder(map);
 
                 // Update progress.
                 progress++;
@@ -110,11 +109,11 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             Toolkit.getDefaultToolkit().beep();
             setCursor(null); //turn off the wait cursor
 
-            if (downloadCanceled) {
+            if (downloadManager.isDownloadCanceled()) {
                 progressBar.setValue(0);
-                DownloadManager.appendToSwingLogger("Download canceled!");
+                downloadManager.appendToSwingLogger("Download canceled!");
             } else {
-                DownloadManager.appendToSwingLogger(downloadFailed ? "Download failed!" : "Download completed!");
+                downloadManager.appendToSwingLogger(downloadManager.isDownloadFailed() ? "Download failed!" : "Download completed!");
             }
         }
     }
@@ -125,7 +124,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         this.setTitle("zRageServerDownloader: " + server.getName());
 
         this.serverContext = server;
-        this.mapManager = new MapManager(serverContext);
+        this.downloadManager = new DownloadManager(serverContext);
 
         // Init swing components.
         initComponents();
@@ -174,8 +173,8 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelDownloadButton.addActionListener(evt -> {
             cancelDownloadButton.setEnabled(false);
-            downloadCanceled = true;
-            DownloadManager.appendToSwingLogger("Canceling download. Waiting for end of the current process...");
+            downloadManager.setDownloadCanceled(true);
+            downloadManager.appendToSwingLogger("Canceling download. Waiting for end of the current process...");
         });
         cancelDownloadButton.setEnabled(false);
         cancelDownloadButton.setVisible(false);
@@ -193,7 +192,7 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
         JScrollPane progressTextPanel = new JScrollPane();
         progressTextPanel.setViewportView(progressTextArea);
         new JSmartScroller(progressTextPanel);
-        DownloadManager.setSwingLoggerTextArea(progressTextArea);
+        downloadManager.setSwingLoggerTextArea(progressTextArea);
 
         // Generated code by Netbeans form editor.
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);

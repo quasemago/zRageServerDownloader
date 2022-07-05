@@ -1,5 +1,8 @@
 package br.com.zrage.serverdownloader.core;
 
+import br.com.zrage.serverdownloader.core.models.GameAsset;
+import br.com.zrage.serverdownloader.core.models.GameMap;
+import br.com.zrage.serverdownloader.core.models.GameServer;
 import br.com.zrage.serverdownloader.core.models.ServersList;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
@@ -25,20 +28,48 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 // TODO:
 public class DownloadManager {
     private static final String SERVERS_CONTEXT_REMOTEFILE = "https://api.zrage.com.br/mapdownloader/getServersList.php";
-    protected static final Path mainTempFolderPath = Paths.get(System.getProperty("java.io.tmpdir")).resolve("zrageTempDownloader");
-    protected final Path tempFolderPath;
-    protected static JTextArea swingLoggerTextArea;
+    private static final Path mainTempFolderPath = Paths.get(System.getProperty("java.io.tmpdir")).resolve("zrageTempDownloader");
+    private final Path tempFolderPath;
+    private Path gameDirectoryPath;
+    private Path mapsDirectoryPath;
+    private final GameServer serverContext;
+    private JTextArea swingLoggerTextArea;
+    private boolean downloadFailed;
+    private boolean downloadCanceled;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public DownloadManager() {
+    public DownloadManager(GameServer server) {
+        this.serverContext = server;
+
         this.tempFolderPath = mainTempFolderPath.resolve(UUID.randomUUID().toString().toUpperCase());
         new File(tempFolderPath.toString()).mkdirs();
+
+        this.gameDirectoryPath = Paths.get(serverContext.getGameDirectoryPath());
+        this.mapsDirectoryPath = Paths.get(serverContext.getMapsDirectoryPath());
+    }
+
+    public Path getGameDirectoryPath() {
+        return gameDirectoryPath;
+    }
+
+    public void setGameDirectoryPath(Path path) {
+        this.gameDirectoryPath = path;
+    }
+
+    public Path getMapsDirectoryPath() {
+        return mapsDirectoryPath;
+    }
+
+    public void setMapsDirectoryPath(Path path) {
+        this.mapsDirectoryPath = path;
     }
 
     public static ServersList getAvailableServersList() {
@@ -52,7 +83,43 @@ public class DownloadManager {
         return restTemplate.exchange(SERVERS_CONTEXT_REMOTEFILE, HttpMethod.GET, entity, ServersList.class).getBody();
     }
 
-    protected boolean download(String url, Path targetPath) {
+    public List<GameMap> getMapsToDownload(boolean replaceIfExists) {
+        final List<GameMap> serverMapList = serverContext.getGameMapList();
+        List<GameMap> mapList = new ArrayList<>();
+
+        for (GameMap map : serverMapList) {
+            if (map.existsInFolder(mapsDirectoryPath) && !replaceIfExists) {
+                continue;
+            }
+            mapList.add(map);
+        }
+        return mapList;
+    }
+
+    public List<GameAsset> getAssetsToDownload(boolean replaceIfExists) {
+        final List<GameAsset> serverAssetsList = serverContext.getGameAssetsList();
+        List<GameAsset> assetsList = new ArrayList<>();
+
+        for (GameAsset asset : serverAssetsList) {
+            if (asset.existsInFolder(gameDirectoryPath) && !replaceIfExists) {
+                continue;
+            }
+            assetsList.add(asset);
+        }
+        return assetsList;
+    }
+
+    public boolean download(GameMap map) {
+        final Path tempFile = tempFolderPath.resolve(map.getFileName());
+        return this.download(map.getRemoteFileName(), tempFile);
+    }
+
+    public boolean download(GameAsset asset) {
+        final Path tempFile = tempFolderPath.resolve(asset.getFileName());
+        return this.download(asset.getRemoteFileName(), tempFile);
+    }
+
+    private boolean download(String url, Path targetPath) {
         WebClient client = WebClient.builder()
                 .baseUrl(url)
                 .build();
@@ -79,7 +146,29 @@ public class DownloadManager {
         return false;
     }
 
-    protected void decompress(Path filePath, String targetPath) throws IOException {
+    public void decompress(GameMap map) {
+        final Path tempFile = tempFolderPath.resolve(map.getFileName());
+        final String targetTempFile = tempFolderPath.resolve(map.getLocalFileName()).toString();
+
+        try {
+            this.decompress(tempFile, targetTempFile);
+        } catch (IOException err) {
+            err.printStackTrace();
+        }
+    }
+
+    public void decompress(GameAsset asset) {
+        final Path tempFile = tempFolderPath.resolve(asset.getFileName());
+        final String targetTempFile = tempFolderPath.resolve(asset.getLocalFileName()).toString();
+
+        try {
+            this.decompress(tempFile, targetTempFile);
+        } catch (IOException err) {
+            err.printStackTrace();
+        }
+    }
+
+    private void decompress(Path filePath, String targetPath) throws IOException {
         BZip2CompressorInputStream input = new BZip2CompressorInputStream(new BufferedInputStream(Files.newInputStream(filePath)));
         FileOutputStream output = new FileOutputStream(targetPath);
 
@@ -100,7 +189,35 @@ public class DownloadManager {
         }
     }
 
-    protected void moveFile(Path filePath, Path targetPath) {
+    public void moveToGameFolder(GameMap map) {
+        if (!Files.exists(mapsDirectoryPath)) {
+            return;
+        }
+
+        final Path tempFile = tempFolderPath.resolve(map.getLocalFileName());
+        final Path targetFile = mapsDirectoryPath.resolve(map.getLocalFileName());
+
+        this.moveFile(tempFile, targetFile);
+    }
+
+    public void moveToGameFolder(GameAsset asset) {
+        if (!Files.exists(gameDirectoryPath)) {
+            return;
+        }
+
+        final Path tempFile = tempFolderPath.resolve(asset.getLocalFileName());
+        final Path targetFile = gameDirectoryPath.resolve(asset.getFilePath());
+
+        // TODO: Uma melhor maneira de fazer isso?
+        // Cria os subdiretorios necessários.
+        File file = new File(targetFile.toString());
+        File parentFile = file.getParentFile();
+        parentFile.mkdirs();
+
+        this.moveFile(tempFile, targetFile);
+    }
+
+    private void moveFile(Path filePath, Path targetPath) {
         try {
             Files.deleteIfExists(targetPath);
         } catch (IOException err) {
@@ -122,15 +239,31 @@ public class DownloadManager {
         }
     }
 
-    public static void setSwingLoggerTextArea(JTextArea textArea) {
+    public void setSwingLoggerTextArea(JTextArea textArea) {
         swingLoggerTextArea = textArea;
     }
 
-    public static void appendToSwingLogger(String str) {
+    public void appendToSwingLogger(String str) {
         try {
             swingLoggerTextArea.append(str + System.getProperty("line.separator"));
         } catch (NullPointerException err) {
             err.printStackTrace();
         }
+    }
+
+    public boolean isDownloadFailed() {
+        return downloadFailed;
+    }
+
+    public void setDownloadFailed(boolean downloadFailed) {
+        this.downloadFailed = downloadFailed;
+    }
+
+    public boolean isDownloadCanceled() {
+        return downloadCanceled;
+    }
+
+    public void setDownloadCanceled(boolean downloadCanceled) {
+        this.downloadCanceled = downloadCanceled;
     }
 }
