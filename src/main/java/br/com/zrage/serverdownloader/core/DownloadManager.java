@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // TODO:
 public class DownloadManager {
@@ -43,7 +44,8 @@ public class DownloadManager {
     private final GameServer serverContext;
     private JTextArea swingLoggerTextArea;
     private boolean downloadFailed;
-    private boolean downloadCanceled;
+    private AtomicBoolean downloadCanceled = new AtomicBoolean();
+    private int progress;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public DownloadManager(GameServer server) {
@@ -129,17 +131,21 @@ public class DownloadManager {
                 .onErrorResume(WebClientResponseException.class, ex -> {
                     if (ex.getRawStatusCode() == 404) {
                         return Flux.empty();
-                    }
-                    else {
+                    } else {
                         return Mono.error(ex);
                     }
                 });
         DataBufferUtils.write(dataBufferFlux, targetPath, StandardOpenOption.CREATE).block();
 
         try {
-            return Files.size(targetPath) > 0;
+            Thread.sleep(30);
+        } catch (InterruptedException err) {
+            err.printStackTrace();
         }
-        catch (IOException err) {
+
+        try {
+            return Files.exists(targetPath) && Files.size(targetPath) > 0;
+        } catch (IOException err) {
             err.printStackTrace();
         }
 
@@ -260,10 +266,22 @@ public class DownloadManager {
     }
 
     public boolean isDownloadCanceled() {
-        return downloadCanceled;
+        return downloadCanceled.get();
     }
 
     public void setDownloadCanceled(boolean downloadCanceled) {
-        this.downloadCanceled = downloadCanceled;
+        this.downloadCanceled.set(downloadCanceled);
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public void increaseProgress() {
+        this.progress++;
     }
 }
