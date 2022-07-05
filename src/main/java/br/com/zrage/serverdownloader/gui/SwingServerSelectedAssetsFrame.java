@@ -60,10 +60,12 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             downloadManager.appendToSwingLogger("Fetched " + assetsList.size() + " pending assets to download from \"" + serverContext.getName() + "\" server!");
 
             downloadManager.setProgress(0);
+            downloadManager.setParallelDownload(multipleConnsCheckbox.isSelected());
+
             final double selectedCount = assetsList.size();
 
             // Check if download will use multiple connections.
-            if (multipleConnsCheckbox.isSelected()) {
+            if (downloadManager.isParallelDownload()) {
                 assetsList.parallelStream().forEach(item -> {
                     // Task canceled.
                     if (isCancelled() || downloadManager.isDownloadCanceled()) {

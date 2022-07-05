@@ -45,11 +45,13 @@ public class DownloadManager {
     private JTextArea swingLoggerTextArea;
     private boolean downloadFailed;
     private AtomicBoolean downloadCanceled = new AtomicBoolean();
+    private boolean parallelDownload;
     private int progress;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public DownloadManager(GameServer server) {
         this.serverContext = server;
+        this.parallelDownload = false;
 
         this.tempFolderPath = mainTempFolderPath.resolve(UUID.randomUUID().toString().toUpperCase());
         new File(tempFolderPath.toString()).mkdirs();
@@ -137,10 +139,13 @@ public class DownloadManager {
                 });
         DataBufferUtils.write(dataBufferFlux, targetPath, StandardOpenOption.CREATE).block();
 
-        try {
-            Thread.sleep(30);
-        } catch (InterruptedException err) {
-            err.printStackTrace();
+        // Sleep in parallel download.
+        if (parallelDownload) {
+            try {
+                Thread.sleep(35);
+            } catch (InterruptedException err) {
+                err.printStackTrace();
+            }
         }
 
         try {
@@ -271,6 +276,14 @@ public class DownloadManager {
 
     public void setDownloadCanceled(boolean downloadCanceled) {
         this.downloadCanceled.set(downloadCanceled);
+    }
+
+    public void setParallelDownload(boolean parallel) {
+        this.parallelDownload = parallel;
+    }
+
+    public boolean isParallelDownload() {
+        return parallelDownload;
     }
 
     public int getProgress() {
