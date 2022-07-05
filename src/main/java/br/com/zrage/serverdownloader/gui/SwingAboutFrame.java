@@ -65,7 +65,7 @@ public class SwingAboutFrame extends JDialog {
         // TODO: Remove hardcoded version value.
         JLabel versionLabel = new JLabel();
         versionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        versionLabel.setText("Version: 1.0.5");
+        versionLabel.setText("Version: 1.0.6");
 
         JLabel createdByLabel = new JLabel();
         createdByLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
