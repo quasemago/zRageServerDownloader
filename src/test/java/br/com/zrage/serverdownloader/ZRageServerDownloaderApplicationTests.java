@@ -1,21 +1,9 @@
 package br.com.zrage.serverdownloader;
 
-import br.com.zrage.serverdownloader.core.AssetManager;
-import br.com.zrage.serverdownloader.core.DownloadManager;
-import br.com.zrage.serverdownloader.core.MapManager;
-import br.com.zrage.serverdownloader.core.models.GameAsset;
-import br.com.zrage.serverdownloader.core.models.GameMap;
-import br.com.zrage.serverdownloader.core.models.GameServer;
-import br.com.zrage.serverdownloader.core.models.ServersList;
-import br.com.zrage.serverdownloader.core.utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 @SpringBootTest
 class ZRageServerDownloaderApplicationTests {

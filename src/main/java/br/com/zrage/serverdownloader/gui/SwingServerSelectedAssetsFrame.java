@@ -1,6 +1,5 @@
 package br.com.zrage.serverdownloader.gui;
 
-import br.com.zrage.serverdownloader.core.AssetManager;
 import br.com.zrage.serverdownloader.core.DownloadManager;
 import br.com.zrage.serverdownloader.core.models.GameAsset;
 import br.com.zrage.serverdownloader.core.models.GameServer;
@@ -21,10 +20,8 @@ import java.util.List;
 
 public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyChangeListener {
     private final GameServer serverContext;
-    private final AssetManager assetManager;
+    private final DownloadManager downloadManager;
     private TaskSwing task;
-    private boolean downloadFailed;
-    private boolean downloadCanceled;
 
     private class TaskSwing extends SwingWorker<Void, Void> {
         @Override
@@ -32,51 +29,53 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             // Download starting.
             setProgress(0);
 
-            downloadFailed = false;
-            downloadCanceled = false;
+            downloadManager.setDownloadFailed(false);
+            downloadManager.setDownloadCanceled(false);
 
             // Get selected game dir and validate if exists.
             Path gameDirPath = Paths.get(gameDirTextField.getText());
             if (!Files.exists(gameDirPath)) {
-                DownloadManager.appendToSwingLogger("*Error*: Selected game directory not found!");
-                downloadFailed = true;
+                downloadManager.appendToSwingLogger("*Error*: Selected game directory not found!");
+                downloadManager.setDownloadFailed(true);
                 return null;
             }
 
-            assetManager.setGameDirectoryPath(gameDirPath);
+            downloadManager.setGameDirectoryPath(gameDirPath);
 
             // Get available assets to download.
-            List<GameAsset> assetsList = assetManager.getAssetsToDownload(replaceExistingAssetsCheckBox.isSelected());
+            downloadManager.appendToSwingLogger("Fetching pending assets to download from \"" + serverContext.getName() + "\" server!");
+
+            List<GameAsset> assetsList = downloadManager.getAssetsToDownload(replaceExistingAssetsCheckBox.isSelected());
             if (assetsList.isEmpty()) {
                 // Update progress bar.
                 setProgress(100);
                 return null;
             }
 
-            DownloadManager.appendToSwingLogger("Fetched " + assetsList.size() + " pending assets to download from \"" + serverContext.getName() + "\" server!");
+            downloadManager.appendToSwingLogger("Fetched " + assetsList.size() + " pending assets to download from \"" + serverContext.getName() + "\" server!");
 
             int progress = 0;
             double selectedCount = assetsList.size();
 
             for (GameAsset asset : assetsList) {
                 // Task swing canceled.
-                if (isCancelled() || downloadCanceled) {
+                if (isCancelled() || downloadManager.isDownloadCanceled()) {
                     break;
                 }
 
                 // Download asset.
-                DownloadManager.appendToSwingLogger("Downloading: " + asset.getFilePath());
-                if (!assetManager.download(asset)) {
-                    DownloadManager.appendToSwingLogger("*Error Downloading*: " + asset.getRemoteFileName());
+                downloadManager.appendToSwingLogger("Downloading: " + asset.getFilePath());
+                if (!downloadManager.download(asset)) {
+                    downloadManager.appendToSwingLogger("*Error Downloading*: " + asset.getRemoteFileName());
                     continue;
                 }
 
                 // Decompress asset.
-                DownloadManager.appendToSwingLogger("Extracting: " + asset.getFilePath());
-                assetManager.decompress(asset);
+                downloadManager.appendToSwingLogger("Extracting: " + asset.getFilePath());
+                downloadManager.decompress(asset);
 
                 // Move to game directory.
-                assetManager.moveToGameFolder(asset);
+                downloadManager.moveToGameFolder(asset);
 
                 // Update progress.
                 progress++;
@@ -108,11 +107,11 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             Toolkit.getDefaultToolkit().beep();
             setCursor(null); //turn off the wait cursor
 
-            if (downloadCanceled) {
+            if (downloadManager.isDownloadCanceled()) {
                 progressBar.setValue(0);
-                DownloadManager.appendToSwingLogger("Download canceled!");
+                downloadManager.appendToSwingLogger("Download canceled!");
             } else {
-                DownloadManager.appendToSwingLogger(downloadFailed ? "Download failed!" : "Download completed!");
+                downloadManager.appendToSwingLogger(downloadManager.isDownloadFailed() ? "Download failed!" : "Download completed!");
             }
         }
     }
@@ -123,7 +122,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         this.setTitle("zRageServerDownloader: " + server.getName());
 
         this.serverContext = server;
-        this.assetManager = new AssetManager(serverContext);
+        this.downloadManager = new DownloadManager(serverContext);
 
         // Init swing components.
         initComponents();
@@ -171,8 +170,8 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         cancelDownloadButton.setText("Cancel Download");
         cancelDownloadButton.addActionListener(evt -> {
             cancelDownloadButton.setEnabled(false);
-            downloadCanceled = true;
-            DownloadManager.appendToSwingLogger("Canceling download. Waiting for end of the current process...");
+            downloadManager.setDownloadCanceled(true);
+            downloadManager.appendToSwingLogger("Canceling download. Waiting for end of the current process...");
         });
         cancelDownloadButton.setEnabled(false);
         cancelDownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -190,7 +189,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         JScrollPane progressTextPanel = new JScrollPane();
         progressTextPanel.setViewportView(progressTextArea);
         new JSmartScroller(progressTextPanel);
-        DownloadManager.setSwingLoggerTextArea(progressTextArea);
+        downloadManager.setSwingLoggerTextArea(progressTextArea);
 
         // Generated code by Netbeans form editor.
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
