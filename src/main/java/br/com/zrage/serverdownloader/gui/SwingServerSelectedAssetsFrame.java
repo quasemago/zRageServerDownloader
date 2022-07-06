@@ -60,8 +60,6 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             downloadManager.appendToSwingLogger("Fetched " + assetsList.size() + " pending assets to download from \"" + serverContext.getName() + "\" server!");
 
             downloadManager.setProgress(0);
-            downloadManager.setParallelDownload(multipleConnsCheckbox.isSelected());
-
             final double selectedCount = assetsList.size();
 
             // Check if download will use multiple connections.
@@ -188,6 +186,19 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
         multipleConnsCheckbox.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
         multipleConnsCheckbox.setText("Use multiple connections");
         multipleConnsCheckbox.setBackground(new java.awt.Color(225, 225, 225));
+        multipleConnsCheckbox.addActionListener(evt -> {
+            // Make sure the client wants to use this option.
+            if (multipleConnsCheckbox.isSelected()) {
+                final int result = JOptionPane.showConfirmDialog(null, "Warning: This option has a high CPU usage!");
+                if (result == JOptionPane.YES_OPTION) {
+                    downloadManager.setParallelDownload(true);
+                } else {
+                    multipleConnsCheckbox.setSelected(false);
+                }
+            } else {
+                downloadManager.setParallelDownload(false);
+            }
+        });
 
         /* Download/cancel buttons section */
         downloadButton = new JButton();
