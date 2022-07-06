@@ -52,13 +52,18 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
                 return null;
             }
 
+            // Check if client canceled download while fetching pending maps.
+            if (downloadManager.isDownloadCanceled()) {
+                return null;
+            }
+
             downloadManager.appendToSwingLogger("Fetched " + mapList.size() + " pending maps to download from \"" + serverContext.getName() + "\" server!");
 
             int progress = 0;
             double selectedCount = mapList.size();
 
             for (GameMap map : mapList) {
-                // Task swing canceled.
+                // Task canceled.
                 if (isCancelled() || downloadManager.isDownloadCanceled()) {
                     break;
                 }
