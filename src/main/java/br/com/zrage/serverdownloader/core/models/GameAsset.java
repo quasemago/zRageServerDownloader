@@ -4,39 +4,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class GameAsset {
-    private String localFileName;
-    private String fileName;
+    private String localFilePath;
     private String filePath;
-    private String remoteFileName;
+    private String remoteFilePath;
 
     public GameAsset(String rawFileName, GameServer server) {
-        // models/to/folder/model_example.mdl
-        this.filePath = rawFileName;
+        // (models/to/folder/model_example.mdl).
+        this.localFilePath = rawFileName;
 
-        // model_example.mdl
-        this.localFileName = rawFileName.substring(rawFileName.lastIndexOf("\\") + 1);
+        // localFilePath + ext (models/to/folder/model_example.mdl.bz2).
+        this.filePath = localFilePath + ".bz2";
 
-        // model_example.mdl.bz2
-        this.fileName = localFileName + ".bz2";
-
-        // fastdlUrl + fileName
-        this.remoteFileName = (server.getFastDLUrl() + filePath + ".bz2").replaceAll("\\\\", "/");
+        // fastdlUrl + filePath (https://fastdl.com/models/to/folder/model_example.mdl.bz2).
+        this.remoteFilePath = (server.getFastDLUrl() + filePath).replaceAll("\\\\", "/");
     }
 
-    public String getLocalFileName() {
-        return localFileName;
+    public String getLocalFilePath() {
+        return localFilePath;
     }
 
-    public void setLocalFileName(String localFileName) {
-        this.localFileName = localFileName;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setLocalFilePath(String localFilePath) {
+        this.localFilePath = localFilePath;
     }
 
     public String getFilePath() {
@@ -47,16 +35,16 @@ public class GameAsset {
         this.filePath = filePath;
     }
 
-    public String getRemoteFileName() {
-        return remoteFileName;
+    public String getRemoteFilePath() {
+        return remoteFilePath;
     }
 
-    public void setRemoteFileName(String remoteFileName) {
-        this.remoteFileName = remoteFileName;
+    public void setRemoteFilePath(String remoteFilePath) {
+        this.remoteFilePath = remoteFilePath;
     }
 
     public boolean existsInFolder(Path folder) {
-        final Path targetFile = folder.resolve(this.getFilePath());
+        final Path targetFile = folder.resolve(localFilePath);
         return Files.exists(targetFile);
     }
 }

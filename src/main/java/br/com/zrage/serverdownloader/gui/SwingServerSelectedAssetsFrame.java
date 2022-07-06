@@ -120,7 +120,7 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             // Download asset.
             downloadManager.appendToSwingLogger("Downloading: " + asset.getFilePath());
             if (!downloadManager.download(asset)) {
-                downloadManager.appendToSwingLogger("*Error Downloading*: " + asset.getRemoteFileName());
+                downloadManager.appendToSwingLogger("*Error Downloading*: " + asset.getRemoteFilePath());
             } else {
                 // Make sure task is active.
                 if (isCancelled() || downloadManager.isDownloadCanceled()) {
