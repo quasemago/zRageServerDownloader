@@ -33,8 +33,10 @@ public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyC
             downloadManager.setDownloadCanceled(false);
 
             // Get selected game dir and validate if exists.
-            Path gameDirPath = Paths.get(gameDirTextField.getText());
-            if (!Files.exists(gameDirPath)) {
+            final String gameDirText = gameDirTextField.getText();
+            final Path gameDirPath = Paths.get(gameDirText);
+
+            if (gameDirText.isEmpty() || !Files.exists(gameDirPath)) {
                 downloadManager.appendToSwingLogger("*Error*: Selected game directory not found!");
                 downloadManager.setDownloadFailed(true);
                 return null;
