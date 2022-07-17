@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class utils {
+    // TODO: Remove hardcoded version value.
+    public static final String VERSION = "1.0.8";
+
     public static BufferedImage getResourceImageIcon(String resource) {
         try {
             final InputStream input = new ClassPathResource(resource).getInputStream();

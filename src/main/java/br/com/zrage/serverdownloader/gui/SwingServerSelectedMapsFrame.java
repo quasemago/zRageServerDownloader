@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+// TODO: Use IntelliJ swing form.
 public class SwingServerSelectedMapsFrame extends JDialog implements PropertyChangeListener {
     private final GameServer serverContext;
     private final DownloadManager downloadManager;
@@ -33,8 +34,10 @@ public class SwingServerSelectedMapsFrame extends JDialog implements PropertyCha
             downloadManager.setDownloadCanceled(false);
 
             // Get selected game dir and validate if exists.
-            Path mapsDirPath = Paths.get(mapsDirTextField.getText());
-            if (!Files.exists(mapsDirPath)) {
+            final String mapsDirText = mapsDirTextField.getText();
+            final Path mapsDirPath = Paths.get(mapsDirText);
+
+            if (mapsDirText.isEmpty() || !Files.exists(mapsDirPath)) {
                 downloadManager.appendToSwingLogger("*Error*: Selected game maps directory not found!");
                 downloadManager.setDownloadFailed(true);
                 return null;

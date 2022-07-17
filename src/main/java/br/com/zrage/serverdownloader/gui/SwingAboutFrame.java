@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+// TODO: Use IntelliJ swing form.
 public class SwingAboutFrame extends JDialog {
     public SwingAboutFrame(JFrame parent, boolean modal) throws URISyntaxException {
         super(parent, modal);
@@ -62,10 +63,9 @@ public class SwingAboutFrame extends JDialog {
         appInfoTitleLabel.setText("App Information");
         appInfoTitleLabel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
 
-        // TODO: Remove hardcoded version value.
         JLabel versionLabel = new JLabel();
         versionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        versionLabel.setText("Version: 1.0.7");
+        versionLabel.setText(utils.VERSION);
 
         JLabel createdByLabel = new JLabel();
         createdByLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N

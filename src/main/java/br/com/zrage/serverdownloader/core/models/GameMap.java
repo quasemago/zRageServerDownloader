@@ -27,11 +27,6 @@ public class GameMap {
         this.remoteFileName = server.getFastDLUrl() + server.getMapsDirectory().replace("\\", "") + "/" + fileName;
     }
 
-    public boolean existsInMapsFolder() {
-        // TODO: implement existsInMapsFolder;
-        return false;
-    }
-
     public String getName() {
         return name;
     }
