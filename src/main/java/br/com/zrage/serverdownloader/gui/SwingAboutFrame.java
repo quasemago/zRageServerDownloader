@@ -65,7 +65,7 @@ public class SwingAboutFrame extends JDialog {
 
         JLabel versionLabel = new JLabel();
         versionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        versionLabel.setText(utils.VERSION);
+        versionLabel.setText("Version: " + utils.VERSION);
 
         JLabel createdByLabel = new JLabel();
         createdByLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
