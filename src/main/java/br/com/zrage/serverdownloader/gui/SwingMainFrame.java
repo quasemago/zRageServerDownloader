@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
 
+// TODO: Use IntelliJ swing form.
 public class SwingMainFrame extends JFrame {
     private static SwingMainFrame frameInstance;
     private GameServer serverContext;

@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+// TODO: Use IntelliJ swing form.
 public class SwingServerSelectedAssetsFrame extends JDialog implements PropertyChangeListener {
     private final GameServer serverContext;
     private final DownloadManager downloadManager;
